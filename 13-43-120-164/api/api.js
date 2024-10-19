@@ -11,7 +11,7 @@ import fs from 'fs';
 import moment from 'moment';
 
 const app = express();
-dotenv.config({path: '~/.env'});
+dotenv.config({ path: '~/.env' });
 const port = 4000;
 const ip = process.env.IP;
 
@@ -40,15 +40,15 @@ let hatewords = [];
 let connection;
 let shorturlfilter = true;
 const excludedRoutes = [
-    "/login",
-    "/signup",
-    "/message",
-    "/poll",
-    "/validurl",
-    "/getshorturls",
-    "/addshorturl",
-    "/removeshorturl",
-    "/shorturlanalytics",
+    "login",
+    "signup",
+    "message",
+    "poll",
+    "validurl",
+    "getshorturls",
+    "addshorturl",
+    "removeshorturl",
+    "shorturlanalytics",
 ];
 const rl = readline.createInterface({
     input: process.stdin,
@@ -180,53 +180,48 @@ rl.on('line', (input) => {
 handleDisconnect();
 
 
-app.get("/:shorturl", (req, res, next) => {
+app.get("/api/short/:shorturl", (req, res, next) => {
     const { shorturl } = req.params;
-    // Check if the route is in the excluded list
-    if (excludedRoutes.includes(`/${shorturl.toLowerCase()}`)) {
-        return next(); // Skip this middleware and go to the next handler
-    } else {
-        connection.query(
-            `SELECT * FROM shorturls WHERE shorturl = ?`,
-            [shorturl],
-            (err, results) => {
-                if (err) {
-                    console.error("Database query error:", err.stack);
-                    return res.status(500).json({ error: "Database error" });
-                }
-                if (results.length === 0) {
-                    return res.status(404).json({ error: "Short URL not found" });
-                } else {
-                    // get ip user agent referrer location.
-                    const referrer = results[0].redirecturl;
-                    res.redirect(referrer);
-                    const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                    axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IPLOCATER_TOKEN}`)
-                        .then((response) => {
-                            const userAgent = req.headers['user-agent'];
-                            const isp = response.data.org;
-                            const city = response.data.city;
-                            const region = response.data.region;
-                            const country = response.data.country;
-                            const currentTime = moment.utc().format('YYYY-MM-DD HH:mm:ss');
-                            connection.query("INSERT INTO shorturlanalytics (shorturl, timestamp, ip, useragent, referrer, isp, city, region, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                [shorturl, currentTime, clientIp, userAgent, referrer, isp, city, region, country], (err) => {
-                                    if (err) {
-                                        console.error("Error inserting into shorturlanalytics:", err.stack);
-                                    }
-                                }
-                            );
-                        })
-                        .catch((error) => {
-                            console.error("Error fetching IP info:", error.stack);
-                        });
-                }
+    connection.query(
+        `SELECT * FROM shorturls WHERE shorturl = ?`,
+        [shorturl],
+        (err, results) => {
+            if (err) {
+                console.error("Database query error:", err.stack);
+                return res.status(500).json({ error: "Database error" });
             }
-        );
-    }
+            if (results.length === 0) {
+                return res.status(404).json({ error: "Short URL not found" });
+            } else {
+                // get ip user agent referrer location.
+                const referrer = results[0].redirecturl;
+                res.redirect(referrer);
+                const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+                axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IPLOCATER_TOKEN}`)
+                    .then((response) => {
+                        const userAgent = req.headers['user-agent'];
+                        const isp = response.data.org;
+                        const city = response.data.city;
+                        const region = response.data.region;
+                        const country = response.data.country;
+                        const currentTime = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+                        connection.query("INSERT INTO shorturlanalytics (shorturl, timestamp, ip, useragent, referrer, isp, city, region, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            [shorturl, currentTime, clientIp, userAgent, referrer, isp, city, region, country], (err) => {
+                                if (err) {
+                                    console.error("Error inserting into shorturlanalytics:", err.stack);
+                                }
+                            }
+                        );
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching IP info:", error.stack);
+                    });
+            }
+        }
+    );
 });
 
-app.get("/shorturlanalytics", (req, res) => {
+app.get("/api/shorturlanalytics", (req, res) => {
     const shorturl = req.headers.shorturl;
     if (!shorturl) {
         return res.status(400).json({ error: "Short URL is required." });
@@ -263,7 +258,7 @@ app.get("/shorturlanalytics", (req, res) => {
     );
 });
 
-app.post("/signup", async (req, res) => {
+app.post("/api/signup", async (req, res) => {
     const userData = req.body;
     if (!userData || !userData.FirstName || !userData.LastName || !userData.Username || !userData.Password) {
         return res.status(400).json({ error: "First name, last name, username, and password are required." });
@@ -312,7 +307,7 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-app.post("/login", (req, res) => {
+app.post("/api/login", (req, res) => {
     const userData = req.body;
     if (!userData || !userData.Username || !userData.Password) {
         return res.status(400).json({ error: "Username and password are required." });
@@ -350,7 +345,7 @@ app.post("/login", (req, res) => {
     );
 });
 
-app.post("/message", (req, res) => {
+app.post("/api/message", (req, res) => {
     const messageData = req.body.message;
     const token = req.headers.token;
     if (!token) {
@@ -397,7 +392,7 @@ app.post("/message", (req, res) => {
     );
 });
 
-app.get("/poll", (req, res) => {
+app.get("/api/poll", (req, res) => {
     if (messages.length > 0) {
         res.json({ message: messages.shift() });
     } else {
@@ -405,7 +400,7 @@ app.get("/poll", (req, res) => {
     }
 });
 
-app.post("/getattrs", async (req, res) => {
+app.post("/api/getattrs", async (req, res) => {
     try {
         const {
             myattribute1,
@@ -442,7 +437,7 @@ app.post("/getattrs", async (req, res) => {
     }
 });
 
-app.get('/validurl', async (req, res) => {
+app.get('/api/validurl', async (req, res) => {
     // Check if the URL query parameter is present
     if (!req.query.url) {
         return res.status(400).json({ Error: "URL parameter is missing" });
@@ -465,7 +460,7 @@ app.get('/validurl', async (req, res) => {
     }
 });
 
-app.post("/addshorturl", (req, res) => {
+app.post("/api/addshorturl", (req, res) => {
     const userData = req.body;
     const token = req.headers.token;
 
@@ -537,7 +532,7 @@ app.post("/addshorturl", (req, res) => {
     });
 });
 
-app.post("/removeshorturl", (req, res) => {
+app.post("/api/removeshorturl", (req, res) => {
     // check token
     const token = req.headers.token;
     // check the short url because they will be unique
@@ -587,7 +582,7 @@ app.post("/removeshorturl", (req, res) => {
     );
 });
 
-app.get("/getshorturls", (req, res) => {
+app.get("/api/getshorturls", (req, res) => {
     // check token
     const token = req.headers.token;
     if (!token) {
@@ -612,7 +607,57 @@ app.get("/getshorturls", (req, res) => {
 
 // Fallback route for non-existing routes
 app.use("*", (req, res) => {
-    res.status(404).send("Route not found.");
+    res.status(404).send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>404 Not Found</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #121212; /* Dark background color */
+                    color: #e0e0e0; /* Light text color for contrast */
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100vh;
+                    margin: 0;
+                }
+
+                h1 {
+                    font-size: 3rem;
+                    margin-bottom: 1rem;
+                    color: #e0e0e0; /* Light text color for the heading */
+                }
+
+                p {
+                    font-size: 1.25rem;
+                    margin-bottom: 1rem;
+                    color: #b0b0b0; /* Slightly lighter text color for paragraphs */
+                }
+
+                a {
+                    text-decoration: none;
+                    color: #007bff; /* Blue color for links */
+                    font-size: 1rem;
+                }
+
+                a:hover {
+                    text-decoration: underline;
+                    color: #0056b3; /* Darker blue on hover for links */
+                }
+            </style>
+        </head>
+        <body>
+            <h1>404 - Not Found</h1>
+            <p>Oops! The API request you are looking for does not exist.</p>
+            <a href="/">Go back to home</a>
+        </body>
+        </html>
+    `);
 });
 
 app.listen(port, ip, () => {

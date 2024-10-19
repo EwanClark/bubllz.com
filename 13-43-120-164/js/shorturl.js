@@ -2,8 +2,8 @@ let currentID = 1;
 
 // Function to get the short URL code from the full URL
 function extractShortUrlCode(text) {
-    // Use regex to match the short URL code
-    const match = text.match(/https:\/\/short\.bubllz\.com\/([a-zA-Z0-9]+)/);
+    // Use regex to match the new short URL format
+    const match = text.match(/bubllz\.com\/api\/short\/([a-zA-Z0-9]+)/);
     return match ? match[1] : null; // Return the matched code or null if not found
 }
 
@@ -105,31 +105,7 @@ async function validateAndCheckUrl(url) {
         url = protocol + 'www.' + url.replace(protocol, '');
     }
     console.log('URL after formatting:', url);
-
-    try {
-        const response = await fetch(`https://bubllz.com/api/validurl?url=${encodeURIComponent(url)}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.status === 400) {
-            console.log("No URL provided");
-            document.getElementById('shortenButton').disabled = false;
-            alert("No URL provided");
-            return false;
-        }
-        if (response.status === 200) {
-            return url;
-        } else {
-            console.log('URL is invalid');
-            return false;
-        }
-    } catch (error) {
-        console.log("Error:", error);
-        return false;
-    }
+    return url;
 }
 
 // Toggle Dark Mode
@@ -178,7 +154,7 @@ fetch('https://bubllz.com/api/getshorturls', {
             const urlText = document.createElement('div');
             urlText.className = 'url-text';
             urlText.innerHTML = `
-                <a href="https://short.bubllz.com/${url.shorturl}">https://short.bubllz.com/${url.shorturl}</a>
+                <a href="https://bubllz.com/api/short/${url.shorturl}">https://bubllz.com/api/short/${url.shorturl}</a>
                 &nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;
                 <a href="${url.redirecturl}">${url.redirecturl}</a>
                 <br><a href="https://bubllz.com/shorturlanalytics?shorturl=${url.shorturl}">View Analytics</a>
@@ -230,7 +206,7 @@ fetch('https://bubllz.com/api/getshorturls', {
                     const urlText = document.createElement('div');
                     urlText.className = 'url-text';
                     urlText.innerHTML = `
-                        <a href="https://short.bubllz.com/${shorturlcode}">https://short.bubllz.com/${shorturlcode}</a>
+                        <a href="https://bubllz.com/api/short/${shorturlcode}">https://bubllz.com/api/short/${shorturlcode}</a>
                         &nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;
                         <a href="${validUrl}">${validUrl}</a>
                         <br><a href="https://bubllz.com/shorturlanalytics?shorturl=${shorturlcode}">View Analytics</a>
