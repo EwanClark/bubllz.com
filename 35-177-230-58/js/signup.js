@@ -27,7 +27,7 @@ function SignupButtonClicked() {
         return;
     }
     else {
-        fetch("https://api.bubllz.com/signup", {
+        fetch("https://bubllz.com/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

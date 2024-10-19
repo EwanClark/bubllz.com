@@ -17,7 +17,7 @@ async function addShortUrl(redirectUrl, token, customshorturl) {
     }
 
     try {
-        const response = await fetch('https://api.bubllz.com/addshorturl', {
+        const response = await fetch('https://bubllz.com/api/addshorturl', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ async function addShortUrl(redirectUrl, token, customshorturl) {
 
 // Function to remove short URL
 async function removeshorturl(shorturlcode, token, urlItem) {
-    fetch("https://api.bubllz.com/removeshorturl", {
+    fetch("https://bubllz.com/api/removeshorturl", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ async function validateAndCheckUrl(url) {
     console.log('URL after formatting:', url);
 
     try {
-        const response = await fetch(`https://api.bubllz.com/validurl?url=${encodeURIComponent(url)}`, {
+        const response = await fetch(`https://bubllz.com/api/validurl?url=${encodeURIComponent(url)}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -153,7 +153,7 @@ if (!localStorage.getItem('token')) {
 }
 
 // Fetch user's short URLs
-fetch('https://api.bubllz.com/getshorturls', {
+fetch('https://bubllz.com/api/getshorturls', {
     method: 'GET',
     headers: {
         'token': localStorage.getItem('token')

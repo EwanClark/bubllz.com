@@ -8,7 +8,7 @@ function LoginButtonClicked() {
         throw new Error('Please fill out all fields.');
 }
 else {
-    fetch("https://api.bubllz.com/login", {
+    fetch("https://bubllz.com/api/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

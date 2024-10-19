@@ -21,7 +21,7 @@ async function poll() {
     isPolling = true;
 
     try {
-        const response = await fetch('https://api.bubllz.com/poll');
+        const response = await fetch('https://bubllz.com/api/poll');
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -60,7 +60,7 @@ async function sendMessage() {
 
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('https://api.bubllz.com/message', {
+        const response = await fetch('https://bubllz.com/api/message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
