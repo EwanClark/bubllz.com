@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview of Login and Signup System</title>
+    <link rel="stylesheet" href="../css/howitworks.css">
+    <link rel="icon" href="../Assets/Logo/favicon_io/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <h1>Overview of Login and Signup System</h1>
+        <p>Welcome. This document provides an overview of the login and signup system for our website.</p>
+        
+        <h2>Front End</h2>
+        <p>The <code>login.js</code> file performs initial validation on user input. It ensures that all required fields are completed. If any fields are empty, the user will be prompted to fill them in. Upon successful completion, a POST request is sent to the API, which then compares the provided password hash with the one stored in the database for the corresponding username. If a match is found, a success response with status code 200 is returned, and a token is stored in local storage. Subsequently, the user is redirected to the message system.</p>
+        <p>Similarly, the <code>signup.js</code> file verifies that all fields are completed and validates the password against specific criteria, including minimum length, uppercase letter, lowercase letter, number, and absence of whitespace. If the input meets all criteria, the password is hashed, and a POST request is sent to the API. The API then checks the database to ensure that the username is not already in use. If the username is unique, the user is added to the database with a hashed password.</p>
+        <p>The <code>message.js</code> file handles sending and receiving messages. When a user types a message and clicks the send button, the message is transmitted to the API, which then broadcasts it to all connected clients. The message is displayed in the chat window. Users can log out by clicking the logout icon, which removes the token from local storage and redirects them to the login page.</p>
+
+        <h2>Back End</h2>
+        <p>The backend system is configured so that the DNS for the subdomain <code>api.bubllz.com</code> points to the server's IP address. Requests to <code>api.bubllz.com/{your_request}</code> are forwarded by NGINX to <code>35.179.121.244:4000/{your_request}</code>. The Node.js server listens on port 4000 and is set up using Express to handle POST requests. The system includes rate limiting (200 requests per minute). The primary endpoints are <code>/login</code>, <code>/signup</code>, <code>/message</code>, and <code>/poll</code>.</p>
+        <p>For the <code>/login</code> endpoint, the API verifies the existence of the username and compares the provided password hash with the stored hash. If the credentials are valid, the user is logged in, and a token is retrieved from the database. If not, a 401 error is returned.</p>
+        <p>For the <code>/signup</code> endpoint, the API hashes the password and checks if the username is already taken. If the username is available, a random token is generated, and the user is added to the database. A confirmation message is then returned.</p>
+        <p>The <code>/message</code> endpoint verifies the token provided in the request headers against the database. If the token exists, the associated username is retrieved, and the message is sent to all connected clients. If the token does not exist, a 401 error is returned. The API then broadcasts the message to all clients waiting for a response.</p>
+        <p>Finally, the <code>/poll</code> endpoint requests updates from the server when a new message is available. Clients receive a response to their POST request when a new message is posted, prompting the client to make a new request while waiting for further messages.</p>
+
+        <h2>Usage Instructions</h2>
+        <p>Access the login and signup functionalities through the following URLs:</p>
+        <ul>
+            <li><strong>Home:</strong> <a href="https://bubllz.com">https://bubllz.com</a> - Access the home page using this URL.</li>
+            <li><strong>Login:</strong> <a href="https://bubllz.com/login">https://bubllz.com/login</a> - Navigate to the login page to enter your username and password.</li>
+            <li><strong>Signup:</strong> <a href="https://bubllz.com/signup">https://bubllz.com/signup</a> - Access the signup page to create a new account by providing your details and setting a password.</li>
+            <li><strong>Message:</strong> <a href="https://bubllz.com/message">https://bubllz.com/message</a> - Use this URL to access the real-time messaging system where you can send and receive messages.</li>
+        </ul>
+
+        <h2>Source Files</h2>
+        <h3>GitHub Repository:</h3>
+        <ul>
+            <li>GitHub Repository: <a href="https://github.com/EwanClark/LoginSignupMessageSystem/tree/main/">LoginSignupMessageSystem</a></li>
+        </ul>
+        
+        <h3>Login Files:</h3>
+        <ul>
+            <li>CSS: <a href="https://bubllz.com/css/login.css">login.css</a></li>
+            <li>JavaScript: <a href="https://bubllz.com/js/login.js">login.js</a></li>
+        </ul>
+
+        <h3>Signup Files:</h3>
+        <ul>
+            <li>CSS: <a href="https://bubllz.com/css/signup.css">signup.css</a></li>
+            <li>JavaScript: <a href="https://bubllz.com/js/signup.js">signup.js</a></li>
+        </ul>
+
+        <h3>Message Files:</h3>
+        <ul>
+            <li>CSS: <a href="https://bubllz.com/css/message.css">message.css</a></li>
+            <li>JavaScript: <a href="https://bubllz.com/js/message.js">message.js</a></li>
+        </ul>
+
+        <h3>How It Works Files:</h3>
+        <ul>
+            <li>CSS: <a href="https://bubllz.com/css/howitworks.css">howitworks.css</a></li>
+        </ul>
+
+        <h3>Backend API File:</h3>
+        <ul>
+            <li>JavaScript: <a href="https://github.com/EwanClark/bubllz.com/blob/main/35-177-230-58/api/api.js">api.js</a></li>
+        </ul>
+    </div>
+</body>
+</html>

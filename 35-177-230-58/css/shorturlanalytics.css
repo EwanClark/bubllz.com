@@ -1,0 +1,267 @@
+/* Import Google Font "Roboto" */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Reset some default browser styles */
+body, h1, p, table, th, td {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+/* General Body Styles */
+body {
+    background-color: #f4f4f4; /* Light background color */
+    color: #333; /* Dark text color */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0 20px; /* Space on the sides */
+}
+
+/* Container for the content */
+.container {
+    background-color: #fff; /* White background for the container */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 90%;
+    text-align: left;
+    margin-top: 100px; /* Add spacing from the top */
+    overflow-x: hidden; /* Disable horizontal scrolling */
+}
+
+/* Centered Title */
+header {
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header h1 {
+    color: #333;
+    margin: 0;
+    font-size: 2em;
+}
+
+/* Centered paragraph for click count */
+header p {
+    color: #666;
+    margin: 0;
+    font-size: 1.5em; /* Increased font size */
+    font-weight: bold;
+    padding: 0 20px; /* Padding on the sides of the click count */
+}
+
+/* Button Styles */
+#toggleDarkMode {
+    background-color: #007bff; /* Blue background */
+    color: #fff; /* White text */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Transition for hover effect */
+    margin: 10px 20px; /* Space on the sides of the button */
+}
+
+#toggleDarkMode:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    table-layout: auto;
+    word-wrap: break-word;
+}
+
+/* Table headers */
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+thead {
+    background-color: #e9ecef;
+}
+
+th {
+    background-color: #f1f3f5;
+    color: #333;
+    font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Scrollbars */
+.container::-webkit-scrollbar {
+    width: 12px;
+}
+
+.container::-webkit-scrollbar-track {
+    background: #f1f3f5;
+    border-radius: 8px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
+/* For Firefox */
+.container {
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #f1f3f5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    th, td {
+        padding: 10px;
+    }
+
+    table {
+        font-size: 0.9em;
+    }
+}
+
+/* Styles for click count */
+#clickCount {
+    font-weight: bold;
+    color: #007bff;
+    padding: 0 20px; /* Padding on the sides of the click count */
+}
+
+/* Link Styles */
+a {
+    color: #1e90ff; /* Bright blue for links */
+    text-decoration: none; /* Remove underline */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff; /* Blue background color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #121212; /* Dark background color */
+    color: #e0e0e0; /* Light text color */
+}
+
+body.dark-mode .container {
+    background-color: #1e1e1e; /* Darker background for the container */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode header {
+    background-color: #1e1e1e; /* Darker background for the header */
+    border-bottom: 1px solid #333; /* Darker border for the header */
+}
+
+body.dark-mode header h1 {
+    color: #e0e0e0; /* Light color for the title */
+}
+
+body.dark-mode header p {
+    color: #b0b0b0; /* Light color for the paragraph */
+}
+
+body.dark-mode #toggleDarkMode {
+    background-color: #0056b3; /* Darker blue background color */
+}
+
+body.dark-mode #toggleDarkMode:hover {
+    background-color: #003f7f; /* Even darker blue on hover */
+}
+
+body.dark-mode table {
+    background-color: #1e1e1e; /* Darker background for the table */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode th, body.dark-mode td {
+    border-bottom: 1px solid #333; /* Darker border for table cells */
+    color: #e0e0e0; /* Light text color for table cells */
+}
+
+body.dark-mode thead {
+    background-color: #333; /* Darker background for the table header */
+}
+
+body.dark-mode th {
+    background-color: #444; /* Darker background for table headers */
+    color: #e0e0e0; /* Light color for table headers */
+}
+
+body.dark-mode tbody tr:nth-child(even) {
+    background-color: #2a2a2a; /* Darker background for even rows */
+}
+
+body.dark-mode tbody tr:hover {
+    background-color: #333; /* Darker background for hovered rows */
+}
+
+body.dark-mode a {
+    color: #1e90ff; /* Bright blue for links */
+}
+
+body.dark-mode a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+body.dark-mode button {
+    background-color: #0056b3; /* Darker blue background color */
+}
+
+body.dark-mode button:hover {
+    background-color: #003f7f; /* Even darker blue on hover */
+}
+
+::-webkit-scrollbar {
+    display: none;
+}

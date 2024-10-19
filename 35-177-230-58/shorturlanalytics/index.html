@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Analytics</title>
+    <link rel="icon" href="../Assets/Logo/favicon_io/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../css/shorturlanalytics.css">
+</head>
+<body>
+    <!-- Header with Title, Click Count, and Dark Mode Toggle -->
+    <header>
+        <div class="header-content">
+            <p>Total Clicks: <span id="clickCount">0</span></p>
+            <h1 id="title">URL Analytics for ...</h1>
+            <button id="toggleDarkMode">Toggle Dark Mode</button>
+        </div>
+    </header>
+
+    <!-- Container for the Table -->
+    <div class="container">
+        <table id="urlAnalyticsTable" border="1">
+            <thead>
+                <tr>
+                    <th>Timestamp UTC Time</th>
+                    <th>IP</th>
+                    <th>Redirect</th>
+                    <th>ISP</th>
+                    <th>City</th>
+                    <th>Region</th>
+                    <th>Country</th>
+                    <th>User Agent</th>
+                </tr>
+            </thead>
+            <tbody id="analyticsData">
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Link the external JavaScript file -->
+    <script src="../js/shorturlanalytics.js"></script>
+</body>
+</html>

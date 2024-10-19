@@ -1,0 +1,77 @@
+/* Import Google Font "Roboto" */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Reset some default browser styles */
+body, h1, p, a {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+/* General Body Styles */
+body {
+    background-color: #121212; /* Dark background color */
+    color: #e0e0e0; /* Light text color for contrast */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+/* Container for the content */
+.container {
+    background-color: #1f1f1f; /* Slightly lighter dark color for the container */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+/* Title Styles */
+h1 {
+    font-size: 2em;
+    color: #e0e0e0; /* Light color for the title */
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #e0e0e0; /* Light color for sub-titles */
+    margin-top: 20px;
+    margin-bottom: 15px;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+/* Paragraph Styles */
+p {
+    font-size: 1em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+/* Link Styles */
+a {
+    color: #007bff; /* Blue color for links */
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline links on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+    }
+}

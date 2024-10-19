@@ -1,0 +1,112 @@
+/* Import Google Font "Roboto" */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Reset default browser styles */
+body, h1, p, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* General body styles */
+body {
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+    background-color: #121212; /* Dark background color */
+    color: #e0e0e0; /* Light text color for contrast */
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevents body scroll */
+}
+
+/* Container for the chat app */
+.chat-container {
+    background-color: #1f1f1f; /* Slightly lighter dark color for the container */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Darker shadow for contrast */
+    width: 100%; /* Full width */
+    max-width: 100%;
+    height: 100%; /* Full height of the viewport */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Hide any overflow */
+}
+
+/* Area to display messages */
+.message-display-area {
+    flex: 1;
+    padding: 10px 20px; /* Reduced padding for a cleaner look */
+    overflow-y: auto; /* Enables vertical scrolling */
+    background-color: #1f1f1f; /* Background color matching container */
+    color: #e0e0e0; /* Light text color */
+    border-bottom: 1px solid #333; /* Dark border color */
+    font-size: 16px; /* Set a consistent font size for messages */
+}
+
+/* Logout icon */
+.logout-icon {
+    position: fixed; /* Fix the position to the top-right corner */
+    top: 10px;
+    right: 10px;
+    width: 40px; /* Adjust size as needed */
+    height: 40px;
+    cursor: pointer;
+    z-index: 1000; /* Ensure it is above other elements */
+}
+
+/* Container for input and send button */
+.message-input-container {
+    position: fixed; /* Fix the position to the bottom */
+    bottom: 0;
+    left: 0;
+    width: 100%; /* Full width */
+    padding: 10px;
+    background-color: #2c2c2c; /* Slightly different shade for input container */
+    border-top: 1px solid #333; /* Darker border color */
+    box-sizing: border-box; /* Ensure full width */
+    display: flex; /* Align items horizontally */
+}
+
+/* Input field styles */
+#messageInput {
+    flex: 1;
+    padding: 15px;
+    font-size: 16px;
+    border: 1px solid #333; /* Darker border color */
+    border-radius: 4px;
+    background-color: #2c2c2c; /* Dark background for input field */
+    color: #e0e0e0; /* Light text color */
+    margin-right: 10px; /* Space between input and button */
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+/* Send button styles */
+#sendButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff; /* Blue background color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 100px; /* Fixed width to resemble Discord's send button */
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+#sendButton:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    #messageInput {
+        font-size: 14px; /* Slightly smaller font for smaller screens */
+    }
+
+    #sendButton {
+        padding: 10px 15px; /* Adjust padding on smaller screens */
+        font-size: 14px;
+    }
+}

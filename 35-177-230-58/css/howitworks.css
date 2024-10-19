@@ -1,0 +1,100 @@
+/* Import Google Font "Roboto" */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Reset some default browser styles */
+body, h1, h2, p {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+body {
+    line-height: 1.6;
+    color: #e0e0e0; /* Light grey text for dark mode */
+    background-color: #121212; /* Dark background color */
+    padding: 20px;
+}
+
+/* Container for the content */
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: #1e1e1e; /* Dark background for the container */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Darker shadow for better contrast */
+}
+
+/* Headings */
+h1, h2 {
+    color: #e0e0e0; /* Light grey text for headings */
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+h2 {
+    font-size: 2em;
+    border-bottom: 2px solid #333; /* Darker border for headings */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+/* Links */
+a {
+    color: #1e90ff; /* Bright blue for links */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* List styling */
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+/* Code styling */
+code {
+    background: #2d2d2d; /* Dark background for code blocks */
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #f8f8f2; /* Light text for code */
+    font-family: Consolas, "Courier New", monospace;
+}
+
+/* Styling for alert messages */
+.alert {
+    background-color: #6c757d; /* Dark background for alert */
+    color: #e0e0e0; /* Light text for alert */
+    border: 1px solid #495057; /* Dark border for alert */
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+/* Note styling */
+.note {
+    background-color: #004085; /* Dark blue background for note */
+    color: #cce5ff; /* Light blue text for note */
+    border: 1px solid #b8daff; /* Light blue border for note */
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 20px;
+}

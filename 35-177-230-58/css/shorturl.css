@@ -1,0 +1,213 @@
+/* Import Google Font "Roboto" */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Reset some default browser styles */
+body, h1, p, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+}
+
+/* General Body Styles */
+body {
+    background-color: #f4f4f4; /* Light background color */
+    color: #333; /* Dark text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Container for the content */
+.container {
+    background-color: #fff; /* White background for the container */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 80vh; /* Limit container height to avoid overflowing */
+}
+
+/* Title Styles */
+h1 {
+    font-size: 2em;
+    color: #333; /* Dark color for the title */
+    margin-bottom: 20px;
+}
+
+/* Input Styles */
+input[type="text"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Button Styles */
+button {
+    padding: 10px 20px;
+    background-color: #007bff; /* Blue background color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* URL Display Styles */
+.shorturl {
+    margin-top: 20px;
+}
+
+.url-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.url-item {
+    position: relative; /* Position relative to place delete button outside */
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: calc(100% - 80px); /* Adjust width to leave space for delete button */
+    text-align: center; /* Center the text */
+    font-family: monospace;
+    word-wrap: break-word; /* Ensure long words break and wrap */
+    overflow-wrap: break-word; /* For compatibility */
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+}
+
+/* URL Text Styles */
+.url-text {
+    display: inline-block; /* Ensure the text is an inline block */
+    max-width: 100%; /* Ensure text doesn't exceed the container width */
+    word-wrap: break-word; /* Ensure long words break and wrap */
+    text-align: center; /* Center text within its container */
+    font-family: 'Roboto', sans-serif; /* Set font family to match the body text */
+}
+
+
+/* Delete Button Styles */
+.url-item .delete-btn {
+    position: absolute;
+    right: -70px; /* Move button outside the div */
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #007bff; /* Blue background color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.3s ease;
+}
+
+.url-item .delete-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #121212; /* Dark background color */
+    color: #e0e0e0; /* Light text color */
+}
+
+body.dark-mode .container {
+    background-color: #1e1e1e; /* Darker background for the container */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode h1 {
+    color: #e0e0e0; /* Light color for the title */
+}
+
+body.dark-mode input[type="text"] {
+    background-color: #333; /* Dark background for inputs */
+    border: 1px solid #555; /* Darker border for inputs */
+    color: #e0e0e0; /* Light text color for inputs */
+}
+
+body.dark-mode button {
+    background-color: #0056b3; /* Darker blue background color */
+}
+
+body.dark-mode button:hover {
+    background-color: #003f7f; /* Even darker blue on hover */
+}
+
+body.dark-mode .url-item {
+    background-color: #333; /* Dark background for URL items */
+    border: 1px solid #555; /* Darker border for URL items */
+    color: #e0e0e0; /* Light text color for URL items */
+}
+
+/* Link Styles */
+a {
+    color: #1e90ff; /* Bright blue for links */
+    text-decoration: none; /* Remove underline */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Custom Scrollbar Styles */
+/* For Webkit browsers (Chrome, Safari) */
+.container::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+}
+
+.container::-webkit-scrollbar-track {
+    background: #1e1e1e; /* Black background color for scrollbar track */
+    border-radius: 8px; /* Rounded corners of the scrollbar track */
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #007bff; /* Blue color for the scrollbar thumb */
+    border-radius: 8px; /* Rounded corners of the scrollbar thumb */
+    transition: background-color 0.3s ease; /* Smooth transition for color change */
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3; /* Darker blue on hover */
+}
+
+/* For Firefox */
+.container {
+    scrollbar-width: thin; /* Thin scrollbar width */
+    scrollbar-color: #007bff #1e1e1e; /* Blue color for scrollbar thumb and black background for track */
+}
+
+/* Remove text centering */
+.url-item {
+    text-align: left; /* Align text to the left */
+    justify-content: flex-start; /* Align content to the start horizontally */
+}
+
+.url-text {
+    text-align: left; /* Align text to the left */
+}
+.container {
+    scrollbar-width: thin; /* Thin scrollbar width */
+    scrollbar-color: #007bff #1e1e1e; /* Blue color for scrollbar thumb and black background for track */
+}
+
+/* For Edge and Internet Explorer */
+.container {
+    -ms-overflow-style: scrollbar; /* Ensure scrollbar is shown */
+}
