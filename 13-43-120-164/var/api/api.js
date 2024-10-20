@@ -9,11 +9,15 @@ import axios from 'axios';
 import readline from 'readline';
 import fs from 'fs';
 import moment from 'moment';
+import http from 'http';
+import WebSocket, { WebSocketServer } from 'ws';
 
 const app = express();
 dotenv.config({ path: '~/.env' });
 const port = 4000;
 const ip = process.env.IP;
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
 
 // Rate limiter middleware
 const limiter = rateLimit({
@@ -400,43 +404,6 @@ app.get("/api/poll", (req, res) => {
     }
 });
 
-app.post("/api/getattrs", async (req, res) => {
-    try {
-        const {
-            myattribute1,
-            lvl1,
-            myattribute2,
-            lvl2,
-            crimsonislepeicetocheckapi,
-            minecraftarmourpeicetocheckapi,
-        } = req.body;
-    }
-    catch (err) {
-        return res.status(400).json({ error: "Missing required parameters" });
-    }
-    try {
-        const uuid = await retrieveAuctionsAndCheckAttrs(
-            myattribute1,
-            lvl1,
-            myattribute2,
-            lvl2,
-            crimsonislepeicetocheckapi,
-            minecraftarmourpeicetocheckapi
-        );
-
-        if (uuid) {
-            res.status(200).json({ uuid });
-        } else {
-            res.status(404).json({ message: "No matching UUID found" });
-        }
-    } catch (err) {
-        console.error("Error in /getattrs route:", err);
-        res
-            .status(500)
-            .json({ error: "An error occurred while retrieving the UUID" });
-    }
-});
-
 app.get('/api/validurl', async (req, res) => {
     // Check if the URL query parameter is present
     if (!req.query.url) {
@@ -660,7 +627,21 @@ app.use("*", (req, res) => {
     `);
 });
 
-app.listen(port, ip, () => {
+wss.on('connection', (ws) => {
+    console.log('New client connected');
+    ws.send('Welcome to the WebSocket server');
+
+    ws.on('message', (message) => {
+        console.log('Received:', message);
+        ws.send(`Echo: ${message}`);
+    });
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+});
+
+server.listen(port, ip, () => {
     if (fs.existsSync('./settings.txt')) {
         console.log('Grabbing settings from settings.txt file.');
         const data = fs.readFileSync('./settings.txt', 'utf8');
@@ -682,7 +663,6 @@ app.listen(port, ip, () => {
         shorturlfilter = true
     }
     if (fs.existsSync('./filter.txt')) {
-        ;
         let hateWords = getHateWordsFromFile('./filter.txt');
         console.log('Hate words loaded from filter.txt file.');
     }
