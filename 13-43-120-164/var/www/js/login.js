@@ -1,3 +1,5 @@
+var login = true;
+
 function LoginButtonClicked() {
     var usernameInputElement = document.getElementById("Username");
     var usernameInputted = usernameInputElement.value;
@@ -20,16 +22,21 @@ else {
     })
     .then(response => {
         if (response.status === 401) {
+            login = false;
             alert("Invalid username or password");
-            return;
         }
         return response.json()
     })
     .then(data => {
-        console.log('Success, token stored!');
-        localStorage.setItem('token', data.message);
-        alert(`User logged in successfully! as ${usernameInputted}`);
-        window.location.href = 'https://bubllz.com';
+        if (!login) {
+            return;
+        }
+        else{
+            console.log('Success, token stored!');
+            localStorage.setItem('token', data.message);
+            alert(`User logged in successfully! as ${usernameInputted}`);
+            window.location.href = 'https://bubllz.com';
+        }
     })
     .catch(error => {
         console.error('There was a problem with the fetch operation:', error);
