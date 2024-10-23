@@ -10,7 +10,7 @@ import readline from 'readline';
 import fs from 'fs';
 import moment from 'moment';
 import http from 'http';
-import WebSocket, { WebSocketServer } from 'ws';
+import { WebSocketServer } from 'ws';
 
 const app = express();
 dotenv.config({ path: '~/.env' });
@@ -39,10 +39,12 @@ app.use(
 app.use(express.json());
 app.use(limiter);
 let messages = [];
-let clients = [];
+let clientpoll = [];
 let hatewords = [];
 let connection;
 let shorturlfilter = true;
+let codocsdocument = ""
+const unknownroutepage = fs.readFileSync('./api404.html', 'utf8');
 const excludedRoutes = [
     "login",
     "signup",
@@ -54,10 +56,12 @@ const excludedRoutes = [
     "removeshorturl",
     "shorturlanalytics",
 ];
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
+
 if (!fs.existsSync('./settings.txt')) {
     fs.writeFileSync('./settings.txt', '');
     console.log('settings.txt created');
@@ -171,11 +175,18 @@ rl.on('line', (input) => {
         case 'help':
             console.log('Commands:');
             console.log('shorturlfilter <true/false/status/reload> - Set short url filter to true or false.');
+            console.log('getcodoc - Display the current codoc document.');
+            console.log('help - Display this help message.');
             console.log('exit - Exit the application.');
             break;
         case 'exit':
             console.log('Exiting the application.');
             process.exit(0);  // Exit the Node.js program with a success status code
+        case 'getcodoc':
+            console.log('Current codoc document:');
+            console.log(codocsdocument);
+        case '':
+            break;
         default:
             console.log('Unknown command, type "help" for more information.');
     }
@@ -384,14 +395,14 @@ app.post("/api/message", (req, res) => {
             res.status(200).json({ message: fullMessage });
 
             // Broadcast the message to all other connected clients
-            clients.forEach((client) => {
+            clientpoll.forEach((client) => {
                 if (!client.res.finished) {
                     client.res.json({ message: fullMessage });
                 }
             });
 
             // Clear the clients array after broadcasting
-            clients = [];
+            clientpoll = [];
         }
     );
 });
@@ -400,7 +411,7 @@ app.get("/api/poll", (req, res) => {
     if (messages.length > 0) {
         res.json({ message: messages.shift() });
     } else {
-        clients.push({ req, res });
+        clientpoll.push({ req, res });
     }
 });
 
@@ -570,75 +581,76 @@ app.get("/api/getshorturls", (req, res) => {
     );
 });
 
-
-
 // Fallback route for non-existing routes
 app.use("*", (req, res) => {
-    res.status(404).send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>404 Not Found</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #121212; /* Dark background color */
-                    color: #e0e0e0; /* Light text color for contrast */
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    height: 100vh;
-                    margin: 0;
-                }
-
-                h1 {
-                    font-size: 3rem;
-                    margin-bottom: 1rem;
-                    color: #e0e0e0; /* Light text color for the heading */
-                }
-
-                p {
-                    font-size: 1.25rem;
-                    margin-bottom: 1rem;
-                    color: #b0b0b0; /* Slightly lighter text color for paragraphs */
-                }
-
-                a {
-                    text-decoration: none;
-                    color: #007bff; /* Blue color for links */
-                    font-size: 1rem;
-                }
-
-                a:hover {
-                    text-decoration: underline;
-                    color: #0056b3; /* Darker blue on hover for links */
-                }
-            </style>
-        </head>
-        <body>
-            <h1>404 - Not Found</h1>
-            <p>Oops! The API request you are looking for does not exist.</p>
-            <a href="/">Go back to home</a>
-        </body>
-        </html>
-    `);
+    res.status(404).send(unknownroutepage);
 });
 
+function heartbeat() {
+    this.isAlive = true;
+}
+
 wss.on('connection', (ws) => {
-    console.log('New client connected');
-    ws.send('Welcome to the WebSocket server');
+    ws.isAlive = true;
+    ws.on('pong', heartbeat);
+
+    ws.send(`doc=${codocsdocument}`);
 
     ws.on('message', (message) => {
-        console.log('Received:', message);
-        ws.send(`Echo: ${message}`);
+        const change = message.toString();
+        if (change.startsWith('i:')) {
+            const insertRegex = /^i:(\d+)="([^"]+)"$/;
+            const match = change.match(insertRegex);
+            if (match) {
+                const position = parseInt(match[1], 10);
+                const textToInsert = match[2];
+                codocsdocument = codocsdocument.slice(0, position) + textToInsert + codocsdocument.slice(position);
+                for (const client of wss.clients) {
+                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                        client.send(change);
+                    }
+                }
+            } else {
+                ws.send('Invalid insert format');
+            }
+        } else if (change.startsWith('d:')) {
+            const deleteRegex = /^d:(\d+)=(\d+)$/;
+            const match = change.match(deleteRegex);
+            if (match) {
+                const position = parseInt(match[1], 10);
+                const lengthToDelete = parseInt(match[2], 10);
+                codocsdocument = codocsdocument.slice(0, position) + codocsdocument.slice(position + lengthToDelete);
+                for (const client of wss.clients) {
+                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                        client.send(change);
+                    }
+                }
+            } else {
+                ws.send('Invalid delete format');
+            }
+        } else {
+            ws.send('Unknown change to document.');
+        }
     });
 
     ws.on('close', () => {
         console.log('Client disconnected');
     });
+});
+
+// Ping clients every 30 seconds
+const interval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+        if (ws.isAlive === false) {
+            return ws.terminate();
+        }
+        ws.isAlive = false;
+        ws.ping();  // Send a ping to the client
+    });
+}, 30000);
+
+wss.on('close', () => {
+    clearInterval(interval);
 });
 
 server.listen(port, ip, () => {
