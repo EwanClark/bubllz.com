@@ -606,7 +606,7 @@ wss.on('connection', (ws) => {
                 const textToInsert = match[2];
                 codocsdocument = codocsdocument.slice(0, position) + textToInsert + codocsdocument.slice(position);
                 for (const client of wss.clients) {
-                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    if (client !== ws) {
                         client.send(change);
                     }
                 }
@@ -621,7 +621,7 @@ wss.on('connection', (ws) => {
                 const lengthToDelete = parseInt(match[2], 10);
                 codocsdocument = codocsdocument.slice(0, position) + codocsdocument.slice(position + lengthToDelete);
                 for (const client of wss.clients) {
-                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    if (client !== ws) {
                         client.send(change);
                     }
                 }
