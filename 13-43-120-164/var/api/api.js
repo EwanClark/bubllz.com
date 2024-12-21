@@ -10,14 +10,12 @@ import readline from 'readline';
 import fs from 'fs';
 import moment from 'moment';
 import http from 'http';
-import { WebSocketServer } from 'ws';
 
 const app = express();
 dotenv.config({ path: '~/.env' });
 const port = 4000;
 const ip = process.env.IP;
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
 
 // Rate limiter middleware
 const limiter = rateLimit({
@@ -42,31 +40,49 @@ let messages = [];
 let clientpoll = [];
 let hatewords = [];
 let connection;
-let shorturlfilter = true;
 let codocsdocument = ""
 const unknownroutepage = fs.readFileSync('./api404.html', 'utf8');
-const excludedRoutes = [
-    "login",
-    "signup",
-    "message",
-    "poll",
-    "validurl",
-    "getshorturls",
-    "addshorturl",
-    "removeshorturl",
-    "shorturlanalytics",
-];
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-if (!fs.existsSync('./settings.txt')) {
-    fs.writeFileSync('./settings.txt', '');
-    console.log('settings.txt created');
-    console.log("Since this is your first time running the application, the shorturlfilter is set to true by default.");
-    fs.writeFileSync('./settings.txt', `shorturlfilter=${shorturlfilter}`);
+let settings = {
+    shorturlfilter: true
+};
+
+function loadSettings() {
+    try {
+        if (fs.existsSync('./settings.txt')) {
+            console.log('Loading settings from settings.txt file.');
+            const data = fs.readFileSync('./settings.txt', 'utf8');
+            const lines = data.split('\n');
+            lines.forEach((line) => {
+                const [key, value] = line.split('=');
+                if (key === 'shorturlfilter') {
+                    settings.shorturlfilter = value === 'true';
+                    console.log(`Short URL filter set to: ${settings.shorturlfilter}`);
+                }
+            });
+        } else {
+            console.log('settings.txt file not found, creating with defaults.');
+            fs.writeFileSync('./settings.txt', 'shorturlfilter=true');
+            settings.shorturlfilter = true;
+        }
+
+        // Load hate words
+        if (fs.existsSync('./filter.txt')) {
+            hatewords = getHateWordsFromFile('./filter.txt');
+            console.log('Hate words loaded successfully.');
+        } else {
+            console.log('filter.txt not found, creating with examples.');
+            fs.writeFileSync('./filter.txt', 'exampleword1\nexampleword2\nexampleword3\n');
+            hatewords = ['exampleword1', 'exampleword2', 'exampleword3'];
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
 }
 
 function handleDisconnect() {
@@ -89,11 +105,7 @@ function handleDisconnect() {
 
     connection.on("error", (err) => {
         console.error("Database error:", err);
-        if (err.code === "PROTOCOL_CONNECTION_LOST" || err.code === "ECONNRESET") {
-            handleDisconnect(); // Reconnect on connection loss or reset
-        } else {
-            console.error("Unhandled error:", err);
-        }
+        setTimeout(handleDisconnect, 1000);
     });
 }
 
@@ -118,79 +130,57 @@ rl.on('line', (input) => {
     const command = args[0].toLowerCase();
     const value = args[1]?.toLowerCase();
 
+    handleCommand(command, value);
+});
+
+function handleCommand(command, value) {
     switch (command) {
         case 'shorturlfilter':
-            if (value === 'true') {
-                shorturlfilter = true;
-                fs.writeFileSync('./settings.txt', `shorturlfilter=${shorturlfilter}`);
-                console.log('Custom short url filter set to: true.');
-            }
-            else if (value === 'false') {
-                shorturlfilter = false;
-                fs.writeFileSync('./settings.txt', `shorturlfilter=${shorturlfilter}`);
-                console.log('Custom short url filter set to: false.');
-            }
-            else if (value === 'status') {
-                console.log(`Short URL filter is currently set to: ${shorturlfilter}`);
-                break;
-            }
-            else if (value === 'reload') {
-                if (fs.existsSync('./settings.txt')) {
-                    console.log('Reloading settings from settings.txt file.');
-                    const data = fs.readFileSync('./settings.txt', 'utf8');
-                    const lines = data.split('\n');
-                    lines.forEach((line) => {
-                        const [key, value] = line.split('=');
-                        if (key === 'shorturlfilter') {
-                            shorturlfilter = value === 'true';
-                            console.log(`Short URL filter set to: ${shorturlfilter} from your settings.txt file.`);
-                        }
-                    });
-                }
-                else {
-                    console.log('settings.txt file not found.');
-                    fs.writeFileSync('./settings.txt', '');
-                    console.log('Created settings.txt file.');
-                    console.log("The shorturlfilter is set to true by default.");
-                    fs.writeFileSync('./settings.txt', 'shorturlfilter=true');
-                    shorturlfilter = true;
-                }
-                if (fs.existsSync('./filter.txt')) {
-                    const hateWords = getHateWordsFromFile('./filter.txt');
-                    console.log('Hate words loaded from filter.txt file.');
-                }
-                else {
-                    console.log('filter.txt file not found.');
-                    fs.writeFileSync('./filter.txt', 'exampleword1\nexampleword2\nexampleword3\n');
-                    console.log('Created filter.txt file.');
-                    console.log("Please add words to the filter.txt file to check for hate speech.");
-                    console.log("Then run 'shorturlfilter reload' to reload the filter.");
-                }
-                break;
-            }
-            else {
-                console.log('Invalid arguments. type "help" for more information.');
-            }
+            handleShortUrlFilter(value);
             break;
         case 'help':
-            console.log('Commands:');
-            console.log('shorturlfilter <true/false/status/reload> - Set short url filter to true or false.');
-            console.log('getcodoc - Display the current codoc document.');
-            console.log('help - Display this help message.');
-            console.log('exit - Exit the application.');
+            showHelp();
             break;
         case 'exit':
             console.log('Exiting the application.');
-            process.exit(0);  // Exit the Node.js program with a success status code
+            process.exit(0);
         case 'getcodoc':
             console.log('Current codoc document:');
             console.log(codocsdocument);
+            break;
         case '':
             break;
         default:
             console.log('Unknown command, type "help" for more information.');
     }
-});
+}
+
+function handleShortUrlFilter(value) {
+    switch (value) {
+        case 'true':
+        case 'false':
+            settings.shorturlfilter = value === 'true';
+            fs.writeFileSync('./settings.txt', `shorturlfilter=${settings.shorturlfilter}`);
+            console.log(`Custom short url filter set to: ${settings.shorturlfilter}`);
+            break;
+        case 'status':
+            console.log(`Short URL filter is currently set to: ${settings.shorturlfilter}`);
+            break;
+        case 'reload':
+            loadSettings();
+            break;
+        default:
+            console.log('Invalid arguments. Type "help" for more information.');
+    }
+}
+
+function showHelp() {
+    console.log('Commands:');
+    console.log('shorturlfilter <true/false/status/reload> - Set short url filter to true or false.');
+    console.log('getcodoc - Display the current codoc document.');
+    console.log('help - Display this help message.');
+    console.log('exit - Exit the application.');
+}
 
 handleDisconnect();
 
@@ -211,7 +201,7 @@ app.get("/api/short/:shorturl", (req, res, next) => {
                 // get ip user agent referrer location.
                 const referrer = results[0].redirecturl;
                 res.redirect(referrer);
-                const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+                const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
                 axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IPLOCATER_TOKEN}`)
                     .then((response) => {
                         const userAgent = req.headers['user-agent'];
@@ -461,14 +451,11 @@ app.post("/api/addshorturl", (req, res) => {
 
         if (userData.customshorturlcode) {
             const customshorturl = userData.customshorturlcode;
-            if (shorturlfilter && isHateSpeech(customshorturl, hatewords)) {
+            if (settings.shorturlfilter && isHateSpeech(customshorturl, hatewords)) {
                 return res.status(403).json({ error: "Short URL contains profanity." });
             }
             else if (!/^[a-zA-Z0-9]+$/.test(customshorturl)) {
                 return res.status(405).json({ error: "Short URL contains invalid characters." });
-            }
-            else if (excludedRoutes.includes(`/${customshorturl.toLowerCase()}`)) {
-                return res.status(406).json({ error: "Short URL is invalid and is one of the api routes." });
             }
 
             connection.query(`SELECT * FROM shorturls WHERE shorturl = ?`, [customshorturl], (err, results) => {
@@ -586,105 +573,9 @@ app.use("*", (req, res) => {
     res.status(404).send(unknownroutepage);
 });
 
-function heartbeat() {
-    this.isAlive = true;
-}
-
-wss.on('connection', (ws) => {
-    ws.isAlive = true;
-    ws.on('pong', heartbeat);
-
-    ws.send(`doc=${codocsdocument}`);
-
-    ws.on('message', (message) => {
-        const change = message.toString();
-        if (change.startsWith('i:')) {
-            const insertRegex = /^i:(\d+)="([^"]+)"$/;
-            const match = change.match(insertRegex);
-            if (match) {
-                const position = parseInt(match[1], 10);
-                const textToInsert = match[2];
-                codocsdocument = codocsdocument.slice(0, position) + textToInsert + codocsdocument.slice(position);
-                for (const client of wss.clients) {
-                    if (client !== ws) {
-                        client.send(change);
-                    }
-                }
-            } else {
-                ws.send('Invalid insert format');
-            }
-        } else if (change.startsWith('d:')) {
-            const deleteRegex = /^d:(\d+)=(\d+)$/;
-            const match = change.match(deleteRegex);
-            if (match) {
-                const position = parseInt(match[1], 10);
-                const lengthToDelete = parseInt(match[2], 10);
-                codocsdocument = codocsdocument.slice(0, position) + codocsdocument.slice(position + lengthToDelete);
-                for (const client of wss.clients) {
-                    if (client !== ws) {
-                        client.send(change);
-                    }
-                }
-            } else {
-                ws.send('Invalid delete format');
-            }
-        } else {
-            ws.send('Unknown change to document.');
-        }
-    });
-
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-});
-
-// Ping clients every 30 seconds
-const interval = setInterval(() => {
-    wss.clients.forEach((ws) => {
-        if (ws.isAlive === false) {
-            return ws.terminate();
-        }
-        ws.isAlive = false;
-        ws.ping();  // Send a ping to the client
-    });
-}, 30000);
-
-wss.on('close', () => {
-    clearInterval(interval);
-});
-
+// Update server startup
 server.listen(port, ip, () => {
-    if (fs.existsSync('./settings.txt')) {
-        console.log('Grabbing settings from settings.txt file.');
-        const data = fs.readFileSync('./settings.txt', 'utf8');
-        const lines = data.split('\n');
-        lines.forEach((line) => {
-            const [key, value] = line.split('=');
-            if (key === 'shorturlfilter') {
-                shorturlfilter = value === 'true';
-                console.log(`Short URL filter set to: ${shorturlfilter} from your settings.txt file.`);
-            }
-        });
-    }
-    else {
-        console.log('settings.txt file not found.');
-        fs.writeFileSync('./settings.txt', '');
-        console.log('Created settings.txt file.');
-        console.log("The shorturlfilter is set to true by default.");
-        fs.writeFileSync('./settings.txt', 'shorturlfilter=true');
-        shorturlfilter = true
-    }
-    if (fs.existsSync('./filter.txt')) {
-        let hateWords = getHateWordsFromFile('./filter.txt');
-        console.log('Hate words loaded from filter.txt file.');
-    }
-    else {
-        console.log('filter.txt file not found.');
-        fs.writeFileSync('./filter.txt', 'exampleword1\nexampleword2\nexampleword3\n');
-        console.log('Created filter.txt file.');
-        console.log("Please add words to the filter.txt file to check for hate speech.");
-        console.log("Then run shorturlfilter reload to reload the filter.");
-    }
+    loadSettings();
     console.log(`API listening at port: ${port} on: ${ip}`);
     console.log("Type 'help' for a list of commands.");
     console.log("-----------------------------------------");
