@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" href="../Assets/Logo/favicon_io/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../css/qrcode.css">
+</head>
+<body>
+    <div class="modal" id="custom-alert">
+        <div class="modal-content">
+            <span class="modal-close" id="close-alert"></span>
+            <p id="alert-message">This is a custom alert!</p>
+            <button id="alert-ok">OK</button>
+        </div>
+    </div>
+    <div class="container">
+        <h1>QR Code Generator</h1>
+        <input type="text" id="data" placeholder="Enter text or URL">
+        <div class="button-container">
+            <button id="generate-btn">Generate QR Code</button>
+            <button id="download-btn">Download QR code</button>
+        </div>
+        <div id="qr-display">
+            <p>Generated QR code will appear here.</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="../js/qrcode.js"></script>
+</body>
+</html>
