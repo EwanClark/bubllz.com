@@ -61,6 +61,7 @@ addEventListener("DOMContentLoaded", function () {
                 const ip = element.ip;
                 const redirect = element.referrer;
                 const isp = element.isp;
+                const authorized = element.password_status;
                 const city = element.city;
                 const region = element.region;
                 const country = element.country;
@@ -79,6 +80,7 @@ addEventListener("DOMContentLoaded", function () {
                     <td>${ip}</td>
                     <td><a href="${redirectlink}">${redirect}</a></td>
                     <td>${isp}</td>
+                    <td>${authorized}</td>
                     <td>${city}</td>
                     <td>${region}</td>
                     <td>${country}</td>
