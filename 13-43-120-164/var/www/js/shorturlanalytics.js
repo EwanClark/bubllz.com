@@ -66,12 +66,18 @@ addEventListener("DOMContentLoaded", function () {
                 const country = element.country;
                 const userAgent = element.useragent;
                 currentData = document.getElementById("analyticsData")
+                var redirectlink;
+                if (!/^https?:\/\//i.test(redirect)) {
+                    redirectlink = (`https://${redirect}`);
+                } else {
+                    redirectlink = redirect;
+                }
                 const newData = 
                 `
                 <tr>
                     <td>${timestamp}</td>
                     <td>${ip}</td>
-                    <td><a href="${redirect}" target="_blank">${redirect}</a></td>
+                    <td><a href="${redirectlink}">${redirect}</a></td>
                     <td>${isp}</td>
                     <td>${city}</td>
                     <td>${region}</td>

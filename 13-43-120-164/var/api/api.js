@@ -42,6 +42,7 @@ let hatewords = [];
 let connection;
 let codocsdocument = ""
 const unknownroutepage = fs.readFileSync('./pages/api404.html', 'utf8');
+const checkpasswordpage = fs.readFileSync('./pages/inputpassword.html', 'utf8')
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -200,11 +201,9 @@ app.get("/api/short/:shorturl", (req, res, next) => {
             } else {
                 // get ip user agent referrer location.
                 const referrer = results[0].redirecturl;
-                if (!/^https?:\/\//i.test(referrer)) {
-                    res.redirect(`https://${referrer}`);
-                } else {
-                    res.redirect(referrer);
-                }
+                const password = results[0].password;
+
+
                 const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
                 axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IPLOCATER_TOKEN}`)
                     .then((response) => {
@@ -214,17 +213,92 @@ app.get("/api/short/:shorturl", (req, res, next) => {
                         const region = response.data.region;
                         const country = response.data.country;
                         const currentTime = moment.utc().format('YYYY-MM-DD HH:mm:ss');
-                        connection.query("INSERT INTO shorturlanalytics (shorturl, timestamp, ip, useragent, referrer, isp, city, region, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                            [shorturl, currentTime, clientIp, userAgent, referrer, isp, city, region, country], (err) => {
+                        var passwordstatus
+                        if (password) {
+                            passwordstatus = "failed"
+                        } else {
+                            passwordstatus = "not_needed"
+                        }
+
+                        connection.query("INSERT INTO shorturlanalytics (shorturl, timestamp, ip, useragent, referrer, isp, city, region, country,  password_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            [shorturl, currentTime, clientIp, userAgent, referrer, isp, city, region, country, passwordstatus], (err, results) => {
                                 if (err) {
                                     console.error("Error inserting into shorturlanalytics:", err.stack);
+                                }
+                                else {
+                                    if (password) {
+                                        const analyticsId = results.insertId;
+                                        // manipulate the password page to have id of the analytics
+                                        const newcheckpasswordpage = checkpasswordpage.replace("INJECTIDHERE", analyticsId);
+                                        return res.send(newcheckpasswordpage);
+                                    }
+                                    if (!/^https?:\/\//i.test(referrer)) {
+                                        return res.redirect(`https://${referrer}`);
+                                    } else {
+                                        return res.redirect(`${referrer}`);
+                                    }
                                 }
                             }
                         );
                     })
                     .catch((error) => {
                         console.error("Error fetching IP info:", error.stack);
-                    });
+                });
+            }
+        }
+    );
+});
+
+
+app.post("/api/short/:shorturl/checkpassword", (req, res) => {
+    const { shorturl } = req.params;
+    const userPassword = req.body.password;
+
+    connection.query(
+        `SELECT password, redirecturl FROM shorturls WHERE shorturl = ?`,
+        [shorturl],
+        (err, results) => {
+            if (err) {
+                console.error("Database query error:", err.stack);
+                return res.status(500).json({ error: "Database error" });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ error: "Short URL not found" });
+            }
+
+            const { password, redirecturl } = results[0];
+
+            // Check if the password matches
+            if (userPassword === password) {
+                // Redirect to the original URL
+                if (!/^https?:\/\//i.test(redirecturl)) {
+                    return res.status(200).json({redirecturl: `https://${redirecturl}` });
+                } else {
+                    return res.status(200).json({redirecturl: redirecturl });
+                }
+            } else {
+                // Password mismatch
+                return res.status(401).json({message: "Incorrect password. Please try again."});
+            }
+        }
+    );
+});
+
+app.post("/api/shortanalytics/:id", (req, res) => {
+    const { id } = req.params;
+    connection.query(
+        `UPDATE shorturlanalytics SET password_status = ? WHERE id = ?`,
+        ['passed', id],
+        (err, results) => {
+            if (err) {
+                console.error("Database query error:", err.stack);
+                return res.status(500).json({ error: "Database error" });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ error: "Analytics not found" });
+            } else {
+
+                return res.status(200).json({ message: "Set that password test was passed." });
             }
         }
     );
