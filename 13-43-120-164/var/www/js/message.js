@@ -1,3 +1,19 @@
+function sendalert(message) {
+    // Set the message in the modal
+    document.getElementById('alert-message').textContent = message;
+
+    // Show the modal
+    document.getElementById('custom-alert').style.display = 'flex';
+
+    // Close the modal when clicking the close button or OK button
+    document.getElementById('alert-ok').onclick = closeModal;
+}
+
+function closeModal() {
+    document.getElementById('custom-alert').style.display = 'none';
+}
+
+
 document.getElementById('sendButton').addEventListener('click', sendMessage);
 
 document.getElementById('messageInput').addEventListener('keypress', function(event) {
@@ -9,8 +25,10 @@ document.getElementById('messageInput').addEventListener('keypress', function(ev
 
 function logoutFunction() {
     localStorage.removeItem('token');
-    alert('You have been logged out.');
-    window.location.href = 'https://bubllz.com/login/';
+    sendalert('You have been logged out.');
+    document.getElementById('alert-ok').addEventListener('click', function () {
+        window.location.href = 'https://bubllz.com/login';
+    });
 }
 
 let isPolling = false;
@@ -52,7 +70,7 @@ async function sendMessage() {
     const message = messageInput.value.trim();
 
     if (message === '') {
-        alert('Please enter a message.');
+        sendalert('Please enter a message.');
         return;
     }
 
@@ -69,10 +87,10 @@ async function sendMessage() {
             body: JSON.stringify({ message: message })
         });
         if (response.status === 401) {
-            alert('You are not logged in. Please log in first.');
+            sendalert('You are not logged in. Please log in first.');
             window.location.href = 'https://bubllz.com/login/';
         } else if (response.status === 413) {
-            alert('Message is too large.');
+            sendalert('Message is too large.');
             return;
         } else {
             // Optionally handle the response here if needed

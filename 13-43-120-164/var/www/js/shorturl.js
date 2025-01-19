@@ -1,3 +1,19 @@
+function sendalert(message) {
+    // Set the message in the modal
+    document.getElementById('alert-message').textContent = message;
+
+    // Show the modal
+    document.getElementById('custom-alert').style.display = 'flex';
+
+    // Close the modal when clicking the close button or OK button
+    document.getElementById('alert-ok').onclick = closeModal;
+}
+
+function closeModal() {
+    document.getElementById('custom-alert').style.display = 'none';
+}
+
+
 let currentID = 1;
 
 // Function to get the short URL code from the full URL
@@ -31,35 +47,37 @@ async function addShortUrl(redirectUrl, token, customshorturl) {
         // Handle specific status codes and errors
         if (response.status === 400) {
             document.getElementById('shortenButton').disabled = false;
-            alert("No token provided. Please log in again.");
-            window.location.href = 'https://bubllz.com/login';
+            sendalert("No token provided. Please log in again.");
+            document.getElementById('alert-ok').addEventListener('click', function () {
+                window.location.href = 'https://bubllz.com/login';
+            });
         } else if (response.status === 401) {
             document.getElementById('shortenButton').disabled = false;
-            return alert("Invalid token or session expired. Please log in again.");
+            return sendalert("Invalid token or session expired. Please log in again.");
         } else if (response.status === 402) {
             document.getElementById('shortenButton').disabled = false;
-            return alert("No URL provided. Please enter a URL to shorten.");
+            return sendalert("No URL provided. Please enter a URL to shorten.");
         } else if (response.status === 403) {
             document.getElementById('shortenButton').disabled = false;
-            return alert("Custom short URL contains profanity.");
+            return sendalert("Custom short URL contains profanity.");
         } else if (response.status === 404) {
             document.getElementById('shortenButton').disabled = false;
-            return alert("Custom short URL already exists. Please choose another one.");
+            return sendalert("Custom short URL already exists. Please choose another one.");
         } else if (response.status === 405) {
             document.getElementById('shortenButton').disabled = false;
-            alert("Custom short URL contains invalid characters. Only letters and numbers are allowed.");
+            sendalert("Custom short URL contains invalid characters. Only letters and numbers are allowed.");
         } else if (response.status === 406) {
             document.getElementById('shortenButton').disabled = false;
-            alert("Custom short URL is invalid and one of the current API routes. Please choose another one.");
+            sendalert("Custom short URL is invalid and one of the current API routes. Please choose another one.");
         } else if (response.status === 500) {
             document.getElementById('shortenButton').disabled = false;
-            alert("An error occurred on the server. Please try again later.");
+            sendalert("An error occurred on the server. Please try again later.");
         } else if (response.status === 200) {
             return data.message; // Return the short URL code
         }
     } catch (error) {
         console.error('An error occurred:', error);
-        alert('An error occurred while shortening the URL.');
+        sendalert('An error occurred while shortening the URL.');
     } finally {
         document.getElementById('shortenButton').disabled = false;
     }
@@ -79,14 +97,14 @@ async function removeshorturl(shorturlcode, token, urlItem) {
             if (response.status === 200) {
                 console.log('Short URL deleted');
             } else {
-                alert('An error occurred while deleting the short URL');
+                sendalert('An error occurred while deleting the short URL');
                 document.getElementById('shortenButton').disabled = false;
                 return console.log('An error occurred');
             }
         })
         .catch(error => {
             document.getElementById('shortenButton').disabled = false;
-            return alert('An error occurred while deleting the short URL');
+            return sendalert('An error occurred while deleting the short URL');
         })
         .finally(() => {
             console.log('Short URL deleted from database');
@@ -124,8 +142,10 @@ if (localStorage.getItem('dark-mode') === 'enabled') {
 
 // Check if token is present
 if (!localStorage.getItem('token')) {
-    alert('Please login to create or view your short URLs.');
-    window.location.href = 'https://bubllz.com/login';
+    sendalert('Please login to create or view your short URLs.')
+    document.getElementById('alert-ok').addEventListener('click', function () {
+        window.location.href = 'https://bubllz.com/login';
+    });
 }
 
 // Fetch user's short URLs
@@ -172,13 +192,15 @@ fetch('https://bubllz.com/api/getshorturls', {
                 const urlItem = this.closest('.url-item');
                 const shortUrlCode = extractShortUrlCode(urlItem.querySelector('.url-text').innerHTML);
                 if (!shortUrlCode) {
-                    alert('Could not extract the short URL code.');
+                    sendalert('Could not extract the short URL code.');
                     return;
                 }
 
                 if (!localStorage.getItem('token')) {
-                    alert('Please login to create or view your short URLs.');
-                    window.location.href = 'https://bubllz.com/login';
+                    sendalert('Please login to create or view your short URLs.');
+                    document.getElementById('alert-ok').addEventListener('click', function () {
+                        window.location.href = 'https://bubllz.com/login';
+                    });
                 }
                 removeshorturl(shortUrlCode, localStorage.getItem('token'), urlItem);
             });
@@ -224,13 +246,15 @@ fetch('https://bubllz.com/api/getshorturls', {
                         const urlItem = this.closest('.url-item');
                         const shortUrlCode = extractShortUrlCode(urlItem.querySelector('.url-text').innerHTML);
                         if (!shortUrlCode) {
-                            alert('Could not extract the short URL code.');
+                            sendalert('Could not extract the short URL code.');
                             return;
                         }
 
                         if (!localStorage.getItem('token')) {
-                            alert('Please login to create or view your short URLs.');
-                            window.location.href = 'https://bubllz.com/login';
+                            sendalert('Please login to create or view your short URLs.');
+                            document.getElementById('alert-ok').addEventListener('click', function () {
+                                window.location.href = 'https://bubllz.com/login';
+                            });
                         }
                         removeshorturl(shortUrlCode, localStorage.getItem('token'), urlItem);
                     });

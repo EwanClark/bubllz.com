@@ -1,3 +1,19 @@
+function sendalert(message) {
+    // Set the message in the modal
+    document.getElementById('alert-message').textContent = message;
+
+    // Show the modal
+    document.getElementById('custom-alert').style.display = 'flex';
+
+    // Close the modal when clicking the close button or OK button
+    document.getElementById('alert-ok').onclick = closeModal;
+}
+
+function closeModal() {
+    document.getElementById('custom-alert').style.display = 'none';
+}
+
+
 function SignupButtonClicked() {
     var FirstNameInputElement = document.getElementById("Fname");
     var FirstNameInput = FirstNameInputElement.value;
@@ -15,15 +31,15 @@ function SignupButtonClicked() {
     var passwordAgainInput = passwordAgainInputElement.value;
 
     if (passwordInput != passwordAgainInput) {
-        alert("Passwords do not match");
+        sendalert("Passwords do not match");
         return;
     }
     if (FirstNameInput == "" || LastNameInput == "" || UsernameInput == "" || passwordInput == "" || passwordAgainInput == "") {
-        alert("Please fill out all fields");
+        sendalert("Please fill out all fields");
         return;
     }
     if (passwordInput.search(/\s/) >= 0) {
-        alert("Password must not contain any whitespace");
+        sendalert("Password must not contain any whitespace");
         return;
     }
     else {
@@ -41,19 +57,21 @@ function SignupButtonClicked() {
         })
         .then (response => {
             if (response.status === 400) {
-                alert("Username already exists");
+                sendalert("Username already exists");
                 throw new Error('Username already exists.');
             }
             else if (response.status === 500) {
-                alert("Database error");
+                sendalert("Database error");
                 throw new Error('Database error.');
             }
     return response.json();
     })  
         .then(responseData => {
             console.log('Success:', responseData);
-            alert(`User signed up successfully! as ${UsernameInput}`);
-            window.location.href = "https://bubllz.com/login";
+            sendalert(`User signed up successfully! as ${UsernameInput}`);
+            document.getElementById('alert-ok').addEventListener('click', function () {
+                window.location.href = 'https://bubllz.com/login';
+            });
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation: ', error);

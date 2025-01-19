@@ -1,10 +1,28 @@
+function sendalert(message) {
+    // Set the message in the modal
+    document.getElementById('alert-message').textContent = message;
+
+    // Show the modal
+    document.getElementById('custom-alert').style.display = 'flex';
+
+    // Close the modal when clicking the close button or OK button
+    document.getElementById('alert-ok').onclick = closeModal;
+}
+
+function closeModal() {
+    document.getElementById('custom-alert').style.display = 'none';
+}
+
+
+
+
 function LoginButtonClicked() {
     var usernameInputElement = document.getElementById("Username");
     var usernameInputted = usernameInputElement.value;
     var passwordInputElement = document.getElementById("Password");
     var passwordInputted = passwordInputElement.value;
     if (usernameInputted == "" || passwordInputted == "") {
-        return alert("Please fill out all fields");
+        return sendalert("Please fill out all fields");
     } else {
         var login = true;
         fetch("https://bubllz.com/api/login", {
@@ -20,7 +38,7 @@ function LoginButtonClicked() {
         .then(response => {
             if (response.status === 401) {
                 login = false;
-                alert("Invalid username or password");
+                sendalert("Invalid username or password");
             }
             return response.json();
         })
@@ -28,13 +46,15 @@ function LoginButtonClicked() {
             if (login) {
                 console.log('Success, token stored!');
                 localStorage.setItem('token', data.message);
-                alert(`User logged in successfully! as ${usernameInputted}`);
-                window.location.href = 'https://bubllz.com';
+                sendalert(`User logged in successfully! as ${usernameInputted}`);
+                document.getElementById('alert-ok').addEventListener('click', function () {
+                    window.location.href = 'https://bubllz.com';
+                });
             }
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
-            alert(`Error logging in, ${error}`);
+            sendalert(`Error logging in, ${error}`);
         });
     }
 }

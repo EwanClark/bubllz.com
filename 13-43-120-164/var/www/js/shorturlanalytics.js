@@ -1,3 +1,19 @@
+function sendalert(message) {
+    // Set the message in the modal
+    document.getElementById('alert-message').textContent = message;
+
+    // Show the modal
+    document.getElementById('custom-alert').style.display = 'flex';
+
+    // Close the modal when clicking the close button or OK button
+    document.getElementById('alert-ok').onclick = closeModal;
+}
+
+function closeModal() {
+    document.getElementById('custom-alert').style.display = 'none';
+}
+
+
 document.getElementById('toggleDarkMode').addEventListener('click', function () {
     document.body.classList.toggle('dark-mode');
     if (document.body.classList.contains('dark-mode')) {
@@ -23,15 +39,15 @@ addEventListener("DOMContentLoaded", function () {
     .then(response => {
         if (response.status === 201) {
             console.log("No analytics data found but shorturl exists");
-            alert("No analytics data found but shorturl exists.");
+            sendalert("No analytics data found but shorturl exists.");
             return null; // Stop processing if no data
         } else if (response.status === 404) {
             console.log("Shorturl does not exist");
-            alert("Shorturl does not exist.");
+            sendalert("Shorturl does not exist.");
             return null;
         } else if (response.status === 500) {
             console.log("Database error");
-            alert("Database error.");
+            sendalert("Database error.");
             return null;
         } else if (response.status === 200) {
             return response.json(); // Only return JSON if the response is OK

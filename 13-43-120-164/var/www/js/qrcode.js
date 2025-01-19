@@ -1,4 +1,4 @@
-function stylishAlert(message) {
+function sendalert(message) {
     // Set the message in the modal
     document.getElementById('alert-message').textContent = message;
 
@@ -6,7 +6,6 @@ function stylishAlert(message) {
     document.getElementById('custom-alert').style.display = 'flex';
 
     // Close the modal when clicking the close button or OK button
-    document.getElementById('close-alert').onclick = closeModal;
     document.getElementById('alert-ok').onclick = closeModal;
 }
 
@@ -19,7 +18,7 @@ function closeModal() {
 document.getElementById('generate-btn').addEventListener('click', function () {
     const data = document.getElementById('data').value;
     if (!data) {
-        return stylishAlert('Please enter some text to generate QR code.');
+        return sendalert('Please enter some text to generate QR code.');
     }
 
     const qrDisplay = document.getElementById("qr-display");
@@ -38,7 +37,7 @@ document.getElementById('generate-btn').addEventListener('click', function () {
     // Generate QR code using QRCode.toCanvas()
     QRCode.toCanvas(canvas, data, { width: customWidth, height: customHeight}, function (error) {
         if (error) {
-            stylishAlert(error)
+            sendalert(error)
             document.getElementById('download-btn').disabled = true;
             qrDisplay.innerHTML = `<p>Generated QR code will appear here.</p>`;
         } else {
@@ -57,6 +56,6 @@ document.getElementById('download-btn').addEventListener('click', function () {
         link.download = "qrcode.png";
         link.click();
     } else {
-        stylishAlert("Please generate a QR code first.");
+        sendalert("Please generate a QR code first.");
     }
 });
