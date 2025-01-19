@@ -215,9 +215,9 @@ app.get("/api/short/:shorturl", (req, res, next) => {
                         const currentTime = moment.utc().format('YYYY-MM-DD HH:mm:ss');
                         var passwordstatus
                         if (password) {
-                            passwordstatus = "failed"
+                            passwordstatus = "No"
                         } else {
-                            passwordstatus = "not_needed"
+                            passwordstatus = "N/A"
                         }
 
                         connection.query("INSERT INTO shorturlanalytics (shorturl, timestamp, ip, useragent, referrer, isp, city, region, country,  password_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -288,7 +288,7 @@ app.post("/api/shortanalytics/:id", (req, res) => {
     const { id } = req.params;
     connection.query(
         `UPDATE shorturlanalytics SET password_status = ? WHERE id = ?`,
-        ['passed', id],
+        ['Yes', id],
         (err, results) => {
             if (err) {
                 console.error("Database query error:", err.stack);
