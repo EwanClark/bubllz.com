@@ -106,6 +106,7 @@ button:hover {
     position: absolute;
     right: -70px; /* Move button outside the div */
     top: 50%;
+    height: 39px;
     transform: translateY(-50%);
     background-color: #007bff; /* Blue background color */
     color: #fff;
