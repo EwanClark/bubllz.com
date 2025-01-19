@@ -200,7 +200,11 @@ app.get("/api/short/:shorturl", (req, res, next) => {
             } else {
                 // get ip user agent referrer location.
                 const referrer = results[0].redirecturl;
-                res.redirect(referrer);
+                if (!/^https?:\/\//i.test(referrer)) {
+                    res.redirect(`https://${referrer}`);
+                } else {
+                    res.redirect(referrer);
+                }
                 const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
                 axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IPLOCATER_TOKEN}`)
                     .then((response) => {

@@ -31,6 +31,7 @@ async function addShortUrl(redirectUrl, token, customshorturl) {
     } else {
         body = { redirecturl: redirectUrl };
     }
+    console.log('Body:', body);
 
     try {
         const response = await fetch('https://bubllz.com/api/addshorturl', {
@@ -113,19 +114,6 @@ async function removeshorturl(shorturlcode, token, urlItem) {
         });
 }
 
-// Function to validate and check URL
-async function validateAndCheckUrl(url) {
-    if (!url.startsWith('https://') && !url.startsWith('http://')) {
-        url = 'https://' + url;
-    }
-    if (!url.includes('www.')) {
-        const protocol = url.startsWith('https://') ? 'https://' : 'http://';
-        url = protocol + 'www.' + url.replace(protocol, '');
-    }
-    console.log('URL after formatting:', url);
-    return url;
-}
-
 // Toggle Dark Mode
 document.getElementById('toggleDarkMode').addEventListener('click', function () {
     document.body.classList.toggle('dark-mode');
@@ -173,11 +161,16 @@ fetch('https://bubllz.com/api/getshorturls', {
 
             const urlText = document.createElement('div');
             urlText.className = 'url-text';
+            if (!/^https?:\/\//i.test(url.redirecturl)) {
+                var redirecturl = (`https://${url.redirecturl}`);
+            } else {
+                var redirecturl = url.redirecturl;
+            }
             urlText.innerHTML = `
-                <a href="https://bubllz.com/api/short/${url.shorturl}">https://bubllz.com/api/short/${url.shorturl}</a>
+                <a href="https://bubllz.com/api/short/${url.shorturl}">bubllz.com/api/short/${url.shorturl}</a>
                 &nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;
-                <a href="${url.redirecturl}">${url.redirecturl}</a>
-                <br><a href="https://bubllz.com/shorturlanalytics?shorturl=${url.shorturl}">View Analytics</a>
+                <a href="${redirecturl}">${url.redirecturl}</a>
+                &nbsp;&nbsp;||&nbsp;&nbsp;<a href="https://bubllz.com/shorturlanalytics?shorturl=${url.shorturl}">View Analytics</a>
             `;
             const deleteButton = document.createElement('button');
             deleteButton.className = 'delete-btn';
@@ -214,24 +207,29 @@ fetch('https://bubllz.com/api/getshorturls', {
             document.getElementById('shortenButton').disabled = true;
             console.log('Shorten button clicked');
             const url = document.getElementById('url').value;
-            const validUrl = await validateAndCheckUrl(url);
-            if (validUrl) {
+            if (url) {
                 // Make the short URL
-                const shorturlcode = await addShortUrl(validUrl, localStorage.getItem('token'), document.getElementById('shorturlcode').value);
+                const shorturlcode = await addShortUrl(url, localStorage.getItem('token'), document.getElementById('shorturlcode').value);
                 const parentDiv = document.querySelector('.url-list');
                 if (shorturlcode) {
                     const newDiv = document.createElement('div');
                     newDiv.className = 'url-item';
                     newDiv.setAttribute('data-id', currentID);
                     currentID++;
+                    if (!/^https?:\/\//i.test(url)) {
+                        urltouse = (`https://${url}`);
+                    }
+                    else {
+                        urltouse = url;
+                    }
 
                     const urlText = document.createElement('div');
                     urlText.className = 'url-text';
                     urlText.innerHTML = `
-                        <a href="https://bubllz.com/api/short/${shorturlcode}">https://bubllz.com/api/short/${shorturlcode}</a>
+                        <a href="https://bubllz.com/api/short/${shorturlcode}">bubllz.com/api/short/${shorturlcode}</a>
                         &nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;
-                        <a href="${validUrl}">${validUrl}</a>
-                        <br><a href="https://bubllz.com/shorturlanalytics?shorturl=${shorturlcode}">View Analytics</a>
+                        <a href="${urltouse}">${url}</a>
+                        &nbsp;&nbsp;||&nbsp;&nbsp;<a href="https://bubllz.com/shorturlanalytics?shorturl=${shorturlcode}">View Analytics</a>
                     `;
                     const deleteButton = document.createElement('button');
                     deleteButton.className = 'delete-btn';
@@ -259,6 +257,10 @@ fetch('https://bubllz.com/api/getshorturls', {
                         removeshorturl(shortUrlCode, localStorage.getItem('token'), urlItem);
                     });
                 }
+            }
+            else {
+                sendalert('Please enter a URL to shorten.');
+                document.getElementById('shortenButton').disabled = false;
             }
         });
     })
