@@ -443,6 +443,7 @@ app.post("/api/addshorturl", (req, res) => {
         return res.status(402).json({ error: "Redirect URL is required." });
     }
     const redirecturl = userData.redirecturl;
+    const password = userData.password;
 
     connection.query("SELECT * FROM Users WHERE token = ?", [token], (err, results) => {
         if (err) {
@@ -460,8 +461,7 @@ app.post("/api/addshorturl", (req, res) => {
             }
             else if (!/^[a-zA-Z0-9]+$/.test(customshorturl)) {
                 return res.status(405).json({ error: "Short URL contains invalid characters." });
-            }
-
+            } 
             connection.query(`SELECT * FROM shorturls WHERE shorturl = ?`, [customshorturl], (err, results) => {
                 if (err) {
                     console.error("Database query error:", err.stack);
@@ -470,18 +470,32 @@ app.post("/api/addshorturl", (req, res) => {
                 if (results.length > 0) {
                     return res.status(404).json({ error: "Short URL already exists." });
                 }
-
-                connection.query(
-                    `INSERT INTO shorturls (redirecturl, shorturl, token) VALUES (?, ?, ?)`,
-                    [redirecturl, customshorturl, token],
-                    (err) => {
-                        if (err) {
-                            console.error("Database insertion error:", err.stack);
-                            return res.status(500).json({ error: "Database error" });
+                if (password) {
+                    connection.query(
+                        `INSERT INTO shorturls (redirecturl, shorturl, token, password) VALUES (?, ?, ?, ?)`,
+                        [redirecturl, customshorturl, token, password],
+                        (err) => {
+                            if (err) {
+                                console.error("Database insertion error:", err.stack);
+                                return res.status(500).json({ error: "Database error" });
+                            }
+                            res.status(200).json({ message: customshorturl });
                         }
-                        res.status(200).json({ message: customshorturl });
-                    }
-                );
+                    );
+                }
+                else{
+                    connection.query(
+                        `INSERT INTO shorturls (redirecturl, shorturl, token) VALUES (?, ?, ?)`,
+                        [redirecturl, customshorturl, token],
+                        (err) => {
+                            if (err) {
+                                console.error("Database insertion error:", err.stack);
+                                return res.status(500).json({ error: "Database error" });
+                            }
+                            res.status(200).json({ message: customshorturl });
+                        }
+                    );
+                }
             });
         } else {
             const userid = results[0].ID;
@@ -559,7 +573,12 @@ app.get("/api/getshorturls", (req, res) => {
     }
     // get all short urls of the user with that token
     connection.query(
-        `SELECT id, redirecturl, shorturl FROM shorturls WHERE token = ?`,
+        `SELECT id, redirecturl, shorturl, 
+                CASE 
+                    WHEN password IS NOT NULL THEN true
+                    ELSE false
+                END AS password
+         FROM shorturls WHERE token = ?`,
         [token],
         (err, results) => {
             if (err) {

@@ -24,14 +24,16 @@ function extractShortUrlCode(text) {
 }
 
 // Function to add a short URL
-async function addShortUrl(redirectUrl, token, customshorturl) {
+async function addShortUrl(redirectUrl, token, customshorturl, password) {
     let body;
-    if (customshorturl) {
+
+    if (customshorturl && password) {
+        body = { redirecturl: redirectUrl, customshorturlcode: customshorturl, password: password };
+    } else if (customshorturl) {
         body = { redirecturl: redirectUrl, customshorturlcode: customshorturl };
     } else {
         body = { redirecturl: redirectUrl };
     }
-    console.log('Body:', body);
 
     try {
         const response = await fetch('https://bubllz.com/api/addshorturl', {
@@ -166,8 +168,15 @@ fetch('https://bubllz.com/api/getshorturls', {
             } else {
                 var redirecturl = url.redirecturl;
             }
+            if (url.password) {
+                lockedorunlocked = '&#128274;';
+            }
+            else{
+                lockedorunlocked = '&#128275;';
+            }
+
             urlText.innerHTML = `
-                <a href="https://bubllz.com/api/short/${url.shorturl}">bubllz.com/api/short/${url.shorturl}</a>
+                ${lockedorunlocked}&nbsp;<a href="https://bubllz.com/api/short/${url.shorturl}">bubllz.com/api/short/${url.shorturl}</a>
                 &nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;
                 <a href="${redirecturl}">${url.redirecturl}</a>
                 &nbsp;&nbsp;||&nbsp;&nbsp;<a href="https://bubllz.com/shorturlanalytics?shorturl=${url.shorturl}">View Analytics</a>
@@ -209,7 +218,7 @@ fetch('https://bubllz.com/api/getshorturls', {
             const url = document.getElementById('url').value;
             if (url) {
                 // Make the short URL
-                const shorturlcode = await addShortUrl(url, localStorage.getItem('token'), document.getElementById('shorturlcode').value);
+                const shorturlcode = await addShortUrl(url, localStorage.getItem('token'), document.getElementById('shorturlcode').value, document.getElementById('password').value);
                 const parentDiv = document.querySelector('.url-list');
                 if (shorturlcode) {
                     const newDiv = document.createElement('div');
@@ -222,11 +231,18 @@ fetch('https://bubllz.com/api/getshorturls', {
                     else {
                         urltouse = url;
                     }
+                    
+                    if (document.getElementById('password').value) {
+                        lockedorunlocked = '&#128274;';
+                    }
+                    else{
+                        lockedorunlocked = '&#128275;';
+                    };
 
                     const urlText = document.createElement('div');
                     urlText.className = 'url-text';
                     urlText.innerHTML = `
-                        <a href="https://bubllz.com/api/short/${shorturlcode}">bubllz.com/api/short/${shorturlcode}</a>
+                        ${lockedorunlocked}&nbsp;<a href="https://bubllz.com/api/short/${shorturlcode}">bubllz.com/api/short/${shorturlcode}</a>
                         &nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;
                         <a href="${urltouse}">${url}</a>
                         &nbsp;&nbsp;||&nbsp;&nbsp;<a href="https://bubllz.com/shorturlanalytics?shorturl=${shorturlcode}">View Analytics</a>
