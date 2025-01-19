@@ -41,7 +41,7 @@ let clientpoll = [];
 let hatewords = [];
 let connection;
 let codocsdocument = ""
-const unknownroutepage = fs.readFileSync('./api404.html', 'utf8');
+const unknownroutepage = fs.readFileSync('./pages/api404.html', 'utf8');
 
 const rl = readline.createInterface({
     input: process.stdin,
