@@ -172,7 +172,7 @@ fetch('https://bubllz.com/api/getshorturls', {
                 lockedorunlocked = '&#128274;';
             }
             else{
-                lockedorunlocked = '&#128275;';
+                lockedorunlocked = '';
             }
 
             urlText.innerHTML = `
@@ -233,7 +233,7 @@ fetch('https://bubllz.com/api/getshorturls', {
                     }
                     
                     if (document.getElementById('password').value) {
-                        lockedorunlocked = '&#128274;';
+                        lockedorunlocked = ';';
                     }
                     else{
                         lockedorunlocked = '&#128275;';
