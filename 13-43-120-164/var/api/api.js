@@ -40,7 +40,6 @@ let messages = [];
 let clientpoll = [];
 let hatewords = [];
 let connection;
-let codocsdocument = ""
 const unknownroutepage = fs.readFileSync('./pages/api404.html', 'utf8');
 const checkpasswordpage = fs.readFileSync('./pages/inputpassword.html', 'utf8')
 
@@ -145,10 +144,6 @@ function handleCommand(command, value) {
         case 'exit':
             console.log('Exiting the application.');
             process.exit(0);
-        case 'getcodoc':
-            console.log('Current codoc document:');
-            console.log(codocsdocument);
-            break;
         case '':
             break;
         default:
@@ -178,7 +173,6 @@ function handleShortUrlFilter(value) {
 function showHelp() {
     console.log('Commands:');
     console.log('shorturlfilter <true/false/status/reload> - Set short url filter to true or false.');
-    console.log('getcodoc - Display the current codoc document.');
     console.log('help - Display this help message.');
     console.log('exit - Exit the application.');
 }
@@ -286,9 +280,10 @@ app.post("/api/short/:shorturl/checkpassword", (req, res) => {
 
 app.post("/api/shortanalytics/:id", (req, res) => {
     const { id } = req.params;
+
     connection.query(
-        `UPDATE shorturlanalytics SET password_status = ? WHERE id = ?`,
-        ['Yes', id],
+        `SELECT timestamp FROM shorturlanalytics WHERE id = ?`,
+        [id],
         (err, results) => {
             if (err) {
                 console.error("Database query error:", err.stack);
@@ -297,11 +292,33 @@ app.post("/api/shortanalytics/:id", (req, res) => {
             if (results.length === 0) {
                 return res.status(404).json({ error: "Analytics not found" });
             } else {
-
-                return res.status(200).json({ message: "Set that password test was passed." });
+                const timestampofanalytics = results[0].timestamp;
+                // check if timestamp is older than 1 hour from now
+                const currentTime = moment.utc();
+                const analyticsTime = moment.utc(timestampofanalytics);
+                const difference = currentTime.diff(analyticsTime, 'seconds');
+                if (difference > 300) {
+                    return res.status(403).json({ error: "Analytics Expired, cant change password_status." });
+                } else{
+                    connection.query(
+                        `UPDATE shorturlanalytics SET password_status = ? WHERE id = ?`,
+                        ['Yes', id],
+                        (err, results) => {
+                            if (err) {
+                                console.error("Database query error:", err.stack);
+                                return res.status(500).json({ error: "Database error" });
+                            }
+                            if (results.length === 0) {
+                                return res.status(404).json({ error: "Analytics not found" });
+                            } else {
+                                return res.status(200).json({ message: "Set that password test was passed." });
+                            }
+                        }
+                    );
+                }
             }
         }
-    );
+    )
 });
 
 app.get("/api/shorturlanalytics", (req, res) => {
