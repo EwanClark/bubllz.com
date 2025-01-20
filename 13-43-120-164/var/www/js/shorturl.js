@@ -169,7 +169,7 @@ fetch('https://bubllz.com/api/getshorturls', {
                 var redirecturl = url.redirecturl;
             }
             if (url.password) {
-                lockedorunlocked = '&#128274;';
+                lockedorunlocked = '🔒';
             }
             else{
                 lockedorunlocked = '';
@@ -233,10 +233,10 @@ fetch('https://bubllz.com/api/getshorturls', {
                     }
                     
                     if (document.getElementById('password').value) {
-                        lockedorunlocked = '';
+                        lockedorunlocked = '🔒';
                     }
                     else{
-                        lockedorunlocked = '&#128275;';
+                        lockedorunlocked = '';
                     };
 
                     const urlText = document.createElement('div');
