@@ -31,6 +31,8 @@ async function addShortUrl(redirectUrl, token, customshorturl, password) {
         body = { redirecturl: redirectUrl, customshorturlcode: customshorturl, password: password };
     } else if (customshorturl) {
         body = { redirecturl: redirectUrl, customshorturlcode: customshorturl };
+    } else if (password) {
+        body = { redirecturl: redirectUrl, password: password };
     } else {
         body = { redirecturl: redirectUrl };
     }
