@@ -574,17 +574,32 @@ app.post("/api/addshorturl", (req, res) => {
         } else {
             const userid = results[0].ID;
             const newshorturl = userid + crypto.randomBytes(2).toString("hex");
-            connection.query(
-                `INSERT INTO shorturls (redirecturl, shorturl, token) VALUES (?, ?, ?)`,
-                [redirecturl, newshorturl, token],
-                (err) => {
-                    if (err) {
-                        console.error("Database insertion error:", err.stack);
-                        return res.status(500).json({ error: "Database error" });
+            if (password) {
+                connection.query(
+                    `INSERT INTO shorturls (redirecturl, shorturl, token, password) VALUES (?, ?, ?, ?)`,
+                    [redirecturl, newshorturl, token, password],
+                    (err) => {
+                        if (err) {
+                            console.error("Database insertion error:", err.stack);
+                            return res.status(500).json({ error: "Database error" });
+                        }
+                        res.status(200).json({ message: newshorturl });
                     }
-                    res.status(200).json({ message: newshorturl });
-                }
-            );
+                );
+            }
+            else{
+                connection.query(
+                    `INSERT INTO shorturls (redirecturl, shorturl, token) VALUES (?, ?, ?)`,
+                    [redirecturl, newshorturl, token],
+                    (err) => {
+                        if (err) {
+                            console.error("Database insertion error:", err.stack);
+                            return res.status(500).json({ error: "Database error" });
+                        }
+                        res.status(200).json({ message: newshorturl });
+                    }
+                );
+            }
         }
     });
 });
