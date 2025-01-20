@@ -233,7 +233,7 @@ fetch('https://bubllz.com/api/getshorturls', {
                     }
                     
                     if (document.getElementById('password').value) {
-                        lockedorunlocked = ';';
+                        lockedorunlocked = '';
                     }
                     else{
                         lockedorunlocked = '&#128275;';
