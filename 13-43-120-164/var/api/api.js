@@ -221,10 +221,7 @@ app.get("/api/short/:shorturl", (req, res, next) => {
                                 }
                                 else {
                                     if (password) {
-                                        const analyticsId = results.insertId;
-                                        // manipulate the password page to have id of the analytics
-                                        const newcheckpasswordpage = checkpasswordpage.replace("INJECTIDHERE", analyticsId);
-                                        return res.send(newcheckpasswordpage);
+                                        return res.send(checkpasswordpage);
                                     }
                                     if (!/^https?:\/\//i.test(referrer)) {
                                         return res.redirect(`https://${referrer}`);
@@ -237,7 +234,7 @@ app.get("/api/short/:shorturl", (req, res, next) => {
                     })
                     .catch((error) => {
                         console.error("Error fetching IP info:", error.stack);
-                });
+                    });
             }
         }
     );
@@ -254,71 +251,39 @@ app.post("/api/short/:shorturl/checkpassword", (req, res) => {
         (err, results) => {
             if (err) {
                 console.error("Database query error:", err.stack);
-                return res.status(500).json({ error: "Database error" });
+                return res.status(500).json({ error: "Database error finding shorturl" });
             }
             if (results.length === 0) {
                 return res.status(404).json({ error: "Short URL not found" });
             }
-
             const { password, redirecturl } = results[0];
 
-            // Check if the password matches
             if (userPassword === password) {
-                // Redirect to the original URL
-                if (!/^https?:\/\//i.test(redirecturl)) {
-                    return res.status(200).json({redirecturl: `https://${redirecturl}` });
-                } else {
-                    return res.status(200).json({redirecturl: redirecturl });
-                }
+                connection.query(
+                    `UPDATE shorturlanalytics SET password_status = ? WHERE shorturl = ?`,
+                    ['Yes', shorturl],
+                    (err, results) => {
+                        if (err) {
+                            console.error("Database query error:", err.stack);
+                            return res.status(500).json({ error: "Database error getting analytic" });
+                        }
+                        if (results.length === 0) {
+                            return res.status(404).json({ error: "Analytics not found for shorturl" });
+                        } else {
+                            if (!/^https?:\/\//i.test(redirecturl)) {
+                                return res.status(200).json({ redirecturl: `https://${redirecturl}` });
+                            } else {
+                                return res.status(200).json({ redirecturl: redirecturl });
+                            }
+                        }
+                    }
+                );
             } else {
                 // Password mismatch
-                return res.status(401).json({message: "Incorrect password. Please try again."});
+                return res.status(401).json({ message: "Incorrect password. Please try again." });
             }
         }
     );
-});
-
-app.post("/api/shortanalytics/:id", (req, res) => {
-    const { id } = req.params;
-
-    connection.query(
-        `SELECT timestamp FROM shorturlanalytics WHERE id = ?`,
-        [id],
-        (err, results) => {
-            if (err) {
-                console.error("Database query error:", err.stack);
-                return res.status(500).json({ error: "Database error" });
-            }
-            if (results.length === 0) {
-                return res.status(404).json({ error: "Analytics not found" });
-            } else {
-                const timestampofanalytics = results[0].timestamp;
-                // check if timestamp is older than 1 hour from now
-                const currentTime = moment.utc();
-                const analyticsTime = moment.utc(timestampofanalytics);
-                const difference = currentTime.diff(analyticsTime, 'seconds');
-                if (difference > 300) {
-                    return res.status(403).json({ error: "Analytics Expired, cant change password_status." });
-                } else{
-                    connection.query(
-                        `UPDATE shorturlanalytics SET password_status = ? WHERE id = ?`,
-                        ['Yes', id],
-                        (err, results) => {
-                            if (err) {
-                                console.error("Database query error:", err.stack);
-                                return res.status(500).json({ error: "Database error" });
-                            }
-                            if (results.length === 0) {
-                                return res.status(404).json({ error: "Analytics not found" });
-                            } else {
-                                return res.status(200).json({ message: "Set that password test was passed." });
-                            }
-                        }
-                    );
-                }
-            }
-        }
-    )
 });
 
 app.get("/api/shorturlanalytics", (req, res) => {
@@ -455,9 +420,6 @@ app.post("/api/message", (req, res) => {
         return res.status(402).json({ error: "Message is required." });
     }
 
-    console.log("Received token:", token);
-    console.log("Received message:", messageData);
-
     connection.query(
         "SELECT * FROM Users WHERE token = ?",
         [token],
@@ -474,7 +436,6 @@ app.post("/api/message", (req, res) => {
             const username = results[0].Username;
 
             const fullMessage = { username, message: messageData };
-            console.log("Sending message to clients:", fullMessage);
 
             // Respond to the sender immediately
             res.status(200).json({ message: fullMessage });
@@ -552,7 +513,7 @@ app.post("/api/addshorturl", (req, res) => {
             }
             else if (!/^[a-zA-Z0-9]+$/.test(customshorturl)) {
                 return res.status(405).json({ error: "Short URL contains invalid characters." });
-            } 
+            }
             connection.query(`SELECT * FROM shorturls WHERE shorturl = ?`, [customshorturl], (err, results) => {
                 if (err) {
                     console.error("Database query error:", err.stack);
@@ -574,7 +535,7 @@ app.post("/api/addshorturl", (req, res) => {
                         }
                     );
                 }
-                else{
+                else {
                     connection.query(
                         `INSERT INTO shorturls (redirecturl, shorturl, token) VALUES (?, ?, ?)`,
                         [redirecturl, customshorturl, token],
@@ -604,7 +565,7 @@ app.post("/api/addshorturl", (req, res) => {
                     }
                 );
             }
-            else{
+            else {
                 connection.query(
                     `INSERT INTO shorturls (redirecturl, shorturl, token) VALUES (?, ?, ?)`,
                     [redirecturl, newshorturl, token],
