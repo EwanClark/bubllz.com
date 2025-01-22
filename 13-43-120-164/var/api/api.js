@@ -40,8 +40,8 @@ let messages = [];
 let clientpoll = [];
 let hatewords = [];
 let connection;
-const unknownroutepage = fs.readFileSync('./pages/api404.html', 'utf8');
-const checkpasswordpage = fs.readFileSync('./pages/inputpassword.html', 'utf8')
+const unknownroutepage = fs.readFileSync('../www/404.html', 'utf8');
+const checkpasswordpage = fs.readFileSync('../www/inputpassword.html', 'utf8')
 
 const rl = readline.createInterface({
     input: process.stdin,
