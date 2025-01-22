@@ -1,0 +1,116 @@
+/* Import Google Font "Roboto" */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Reset some default browser styles */
+body, h1, p, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* General Body Styles */
+body {
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Container Styles */
+.container {
+    background-color: #1e1e1e; /* Darker background for container */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    width: 650px; /* Increase width for more space */
+    max-height: 90vh; /* Max height to prevent overflow */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    text-align: left; /* Align text to the left */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Title Styles */
+h1 {
+    font-size: 2.5em;
+    color: #e0e0e0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Section Styles */
+h3 {
+    font-size: 1.6em;
+    margin-bottom: 10px;
+}
+
+/* Paragraph Styles */
+p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+/* List Styles */
+ul {
+    font-size: 1.1em;
+    list-style-type: disc;
+    color: #ddd;
+}
+
+/* Specific List Items Styling */
+ul li {
+    margin-bottom: 8px;
+}
+
+/* Code Styling */
+code {
+    font-size: 1.1em;
+    background-color: #333;
+    padding: 2px 6px;
+    border-radius: 5px;
+}
+
+/* Section Spacing */
+div {
+    margin-bottom: 10px; /* Add space between sections */
+}
+
+/* Hover Effect for Interactive Elements */
+a, code {
+    color: #007bff; /* Light blue */
+    text-decoration: none;
+}
+
+a:hover, code:hover {
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    h3 {
+        font-size: 1.4em;
+    }
+    
+    ul {
+        font-size: 1em;
+    }
+}
+
+/* Custom ID: nocenter */
+#nocenter {
+    text-align: left;
+}

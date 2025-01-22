@@ -59,3 +59,7 @@ document.getElementById('download-btn').addEventListener('click', function () {
         sendalert("Please generate a QR code first.");
     }
 });
+
+document.getElementById('payloads-btn').addEventListener('click', function () {
+    window.location.href = "https://bubllz.com/qrcode/payloads";
+});

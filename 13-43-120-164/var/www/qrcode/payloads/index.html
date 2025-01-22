@@ -1,25 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Qr Code Payloads</title>
     <link rel="icon" href="../../Assets/Logo/favicon_io/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="../css/qrcode.css">
+    <link rel="stylesheet" href="../../css/qrcodepayloads.css">
 </head>
+
 <body>
     <div class="container">
-        <h1>QR Code Generator</h1>
-        <input type="text" id="data" placeholder="Enter text or URL">
-        <div class="button-container">
-            <button id="generate-btn">Generate QR Code</button>
-            <button id="download-btn">Download QR code</button>
-        </div>
-        <div id="qr-display">
-            <p>Generated QR code will appear here.</p>
-        </div>
+        <h1>QR Code Payloads</h1>
+<div>
+    <h3>Plain Text (Including URLs)</h3>
+    <p>Encodes any string of text, including URLs.</p>
+    <p><strong>Examples:</strong></p>
+    <ul id="nocenter">
+      <li>Plain text: <code>Hello, World!</code></li>
+      <li>URL: <code>https://example.com</code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Displays text or redirects to a website.</p>
+  </div>
+  
+  <!-- Email -->
+  <div>
+    <h3>Email</h3>
+    <p>Encodes an email address or a pre-composed email.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li>Address only: <code>mailto:example@example.com</code></li>
+      <li>Pre-filled: <code>mailto:example@example.com?subject=Subject&body=Message</code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Opens the default email client to send an email.</p>
+  </div>
+  
+  <!-- Phone Number -->
+  <div>
+    <h3>Phone Number</h3>
+    <p>Encodes a phone number.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li>Phone number: <code>tel:+1234567890</code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Initiates a phone call.</p>
+  </div>
+  
+  <!-- SMS -->
+  <div>
+    <h3>SMS</h3>
+    <p>Encodes a phone number and a text message.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li>Message: <code>sms:+1234567890?body=Your message here</code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Opens the SMS client with the number and message pre-filled.</p>
+  </div>
+  
+  <!-- WhatsApp Link -->
+  <div>
+    <h3>WhatsApp Link</h3>
+    <p>Encodes a phone number or a pre-filled WhatsApp message.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li>Without a message: <code>https://wa.me/1234567890</code></li>
+      <li>With a pre-filled message: <code>https://wa.me/1234567890?text=Hello+World</code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Opens WhatsApp to chat with the specified number, optionally with a pre-filled message.</p>
+  </div>
+  
+  <!-- Wi-Fi Configuration -->
+  <div>
+    <h3>Wi-Fi Configuration</h3>
+    <p>Encodes Wi-Fi network details.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li><code>WIFI:T:WPA;S:NetworkName;P:Password;;</code></li>
+      <li><strong>Details:</strong></li>
+      <li><code>T</code>: Encryption type (WEP, WPA, or empty for no encryption)</li>
+      <li><code>S</code>: SSID (network name)</li>
+      <li><code>P</code>: Password</li>
+    </ul>
+    <p><strong>Use Case:</strong> Connects to a Wi-Fi network automatically.</p>
+  </div>
+  
+  <!-- Geolocation -->
+  <div>
+    <h3>Geolocation</h3>
+    <p>Encodes latitude and longitude coordinates.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li>Coordinates: <code>geo:37.7749,-122.4194</code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Opens the default map application to a specific location.</p>
+  </div>
+  
+  <!-- vCard -->
+  <div>
+    <h3>vCard</h3>
+    <p>Encodes detailed contact information.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li>Contact information:<br><code>
+  BEGIN:VCARD<br>
+  VERSION:3.0<br>
+  N:LastName;FirstName<br>
+  TEL:+1234567890<br>
+  EMAIL:example@example.com<br>
+  END:VCARD
+        </code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Saves a contact to the device.</p>
+  </div>
+  
+  <!-- Calendar Event -->
+  <div>
+    <h3>Calendar Event</h3>
+    <p>Encodes event details for scheduling.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li>Contact information:<br><code>
+  BEGIN:VEVENT<br>
+  SUMMARY:Meeting with Team<br>
+  DTSTART:20250120T090000<br>
+  DTEND:20250120T100000<br>
+  LOCATION:Office<br>
+  END:VEVENT
+      </code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Adds an event to the device calendar.</p>
+  </div>
+  
+  <!-- Bitcoin and Cryptocurrency Payments -->
+  <div>
+    <h3>Bitcoin and Cryptocurrency Payments</h3>
+    <p>Encodes wallet information and payment details.</p>
+    <p><strong>Format:</strong></p>
+    <ul id="nocenter">
+      <li>Bitcion:<code>bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa?amount=0.01&label=Donation</code></li>
+    </ul>
+    <p><strong>Use Case:</strong> Initiates a cryptocurrency payment.</p>
+  </div>  
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="../js/qrcode.js"></script>
 </body>
 </html>
