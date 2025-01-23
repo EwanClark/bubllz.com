@@ -114,3 +114,35 @@ a:hover, code:hover {
 #nocenter {
     text-align: left;
 }
+
+/* Custom Scrollbar Styles */
+/* For Webkit browsers (Chrome, Safari) */
+.container::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+}
+
+.container::-webkit-scrollbar-track {
+    background: #1e1e1e; /* Black background color for scrollbar track */
+    border-radius: 8px; /* Rounded corners of the scrollbar track */
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #007bff; /* Blue color for the scrollbar thumb */
+    border-radius: 8px; /* Rounded corners of the scrollbar thumb */
+    transition: background-color 0.3s ease; /* Smooth transition for color change */
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3; /* Darker blue on hover */
+}
+
+/* For Firefox */
+.container {
+    scrollbar-width: thin; /* Thin scrollbar width */
+    scrollbar-color: #007bff #1e1e1e; /* Blue color for scrollbar thumb and black background for track */
+}
+
+/* For Edge and Internet Explorer */
+.container {
+    -ms-overflow-style: scrollbar; /* Ensure scrollbar is shown */
+}

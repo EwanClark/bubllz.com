@@ -27,7 +27,7 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     padding: 20px;
     width: 550px;
-    height: 750px;
+    height: 700px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -44,7 +44,7 @@ h1 {
 /* Input Styles */
 #data {
     height: 50px;
-    width: 495px;
+    width: 490px;
     padding: 10px;
     background-color: #333; /* Dark input background */
     border: 1px solid #555; /* Darker border */
@@ -61,9 +61,10 @@ button {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    width: 240px;
+    width: 160px;
+    height: 60px;
+    font-size: 1.1em;
     margin-top: 15px;
-    font-size: 0.95em;
 }
 
 button:hover {
@@ -77,11 +78,9 @@ button:disabled {
     opacity: 0.6;  /* Reduce opacity to show it's disabled */
 }
 
-
-#download-btn {
+#generate-btn #download-btn {
     margin-left: 10px;
 }
-
 
 /* QR Display Styles */
 #qr-display {
