@@ -34,7 +34,6 @@ function logoutFunction() {
 let isPolling = false;
 
 async function poll() {
-    console.log('Polling started');
     if (isPolling) return;
     isPolling = true;
 
@@ -44,7 +43,6 @@ async function poll() {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        console.log('Received data:', data);
 
         if (data.message) {
             // Display the received message
@@ -60,7 +58,6 @@ async function poll() {
         console.error('Polling error:', error);
     } finally {
         isPolling = false;
-        console.log('Polling finished');
         setTimeout(poll, 100);
     }
 }
@@ -92,10 +89,12 @@ async function sendMessage() {
         } else if (response.status === 413) {
             sendalert('Message is too large.');
             return;
+        } else if (response.status === 429) {
+            sendalert('You are sending messages too quickly. Please wait a moment.');
+            return;
         } else {
             // Optionally handle the response here if needed
             const data = await response.json();
-            console.log('Message sent:', data.message);
 
             // Immediately poll to check for the message sent
             poll();

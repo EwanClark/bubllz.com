@@ -34,14 +34,19 @@ body {
 }
 
 /* Area to display messages */
+
 .message-display-area {
     flex: 1;
-    padding: 10px 20px; /* Reduced padding for a cleaner look */
-    overflow-y: auto; /* Enables vertical scrolling */
-    background-color: #1f1f1f; /* Background color matching container */
-    color: #e0e0e0; /* Light text color */
-    border-bottom: 1px solid #333; /* Dark border color */
-    font-size: 16px; /* Set a consistent font size for messages */
+    padding: 10px 20px 80px; /* Added extra bottom padding to prevent overlap */
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border-bottom: 1px solid #333;
+    font-size: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #1e1e1e;
+    margin-bottom: 0px; /* Additional margin to ensure full separation */
 }
 
 /* Logout icon */
@@ -55,17 +60,17 @@ body {
     z-index: 1000; /* Ensure it is above other elements */
 }
 
-/* Container for input and send button */
 .message-input-container {
-    position: fixed; /* Fix the position to the bottom */
+    position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%; /* Full width */
+    width: 100%;
     padding: 10px;
-    background-color: #2c2c2c; /* Slightly different shade for input container */
-    border-top: 1px solid #333; /* Darker border color */
-    box-sizing: border-box; /* Ensure full width */
-    display: flex; /* Align items horizontally */
+    background-color: #2c2c2c;
+    border-top: 1px solid #333;
+    box-sizing: border-box;
+    display: flex;
+    z-index: 100; /* Ensure input is above messages */
 }
 
 /* Input field styles */
@@ -167,4 +172,38 @@ body {
     margin-left: 0; /* Reset margin */
     box-sizing: border-box; /* From reset */
     font-family: 'Roboto', sans-serif; /* From body */
+}
+
+/* Custom Scrollbar Styles */
+/* For Webkit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+    background-color: #1e1e1e; /* Consistent background color */
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e; /* Black background color for scrollbar track */
+    border-radius: 8px; /* Rounded corners of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #007bff; /* Blue color for the scrollbar thumb */
+    border-radius: 8px; /* Rounded corners of the scrollbar thumb */
+    border: 3px solid #1e1e1e; /* Creates a border to give padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0056b3; /* Darker blue on hover */
+}
+
+/* Firefox Scrollbar Styles */
+* {
+    scrollbar-width: thin; /* Thin scrollbar */
+    scrollbar-color: #007bff #1e1e1e; /* Thumb and track colors */
+}
+
+/* Ensure scrollbar is visible on the message display area */
+.message-display-area {
+    overflow-y: auto; /* Force vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
