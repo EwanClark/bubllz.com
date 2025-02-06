@@ -409,57 +409,50 @@ app.post("/api/login", (req, res) => {
         }
     );
 });
-
-app.post("/api/message", (req, res) => {
-    const messageData = req.body.message;
-    const token = req.headers.token;
-    if (!token) {
-        return res.status(400).json({ error: "Token is required." });
-    }
-    if (!messageData) {
-        return res.status(402).json({ error: "Message is required." });
-    }
-
-    connection.query(
-        "SELECT * FROM Users WHERE token = ?",
-        [token],
-        (err, results) => {
-            if (err) {
-                console.error("Database query error:", err.stack);
-                return res.status(500).json({ error: "Database error" });
+// WebSocket connection handler
+wss.on('connection', (ws) => {
+    console.log('New WebSocket connection');
+    
+    // Handle incoming messages
+    ws.on('message', async (message) => {
+        try {
+            const data = JSON.parse(message);
+            
+            // Validate username and message
+            if (!data.username || !data.message) {
+                ws.send(JSON.stringify({ 
+                    error: "Username and message are required." 
+                }));
+                return;
             }
-            if (results.length === 0) {
-                return res
-                    .status(401)
-                    .json({ error: "Invalid token or session expired." });
-            }
-            const username = results[0].Username;
 
-            const fullMessage = { username, message: messageData };
+            const fullMessage = { 
+                username: data.username, 
+                message: data.message 
+            };
 
-            // Respond to the sender immediately
-            res.status(200).json({ message: fullMessage });
-
-            // Broadcast the message to all other connected clients
-            clientpoll.forEach((client) => {
-                if (!client.res.finished) {
-                    client.res.json({ message: fullMessage });
+            // Broadcast message to all connected clients
+            wss.clients.forEach((client) => {
+                if (client.readyState === 1) { // WebSocket.OPEN
+                    client.send(JSON.stringify({ 
+                        message: fullMessage 
+                    }));
                 }
             });
-
-            // Clear the clients array after broadcasting
-            clientpoll = [];
+        } catch (error) {
+            console.error('Error processing message:', error);
+            ws.send(JSON.stringify({ 
+                error: "Invalid message format" 
+            }));
         }
-    );
+    });
+
+    // Handle errors
+    ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
+    });
 });
 
-app.get("/api/poll", (req, res) => {
-    if (messages.length > 0) {
-        res.json({ message: messages.shift() });
-    } else {
-        clientpoll.push({ req, res });
-    }
-});
 
 app.get('/api/validurl', async (req, res) => {
     // Check if the URL query parameter is present
