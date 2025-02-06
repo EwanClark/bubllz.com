@@ -453,7 +453,6 @@ wss.on('connection', (ws) => {
     });
 });
 
-
 app.get('/api/validurl', async (req, res) => {
     // Check if the URL query parameter is present
     if (!req.query.url) {

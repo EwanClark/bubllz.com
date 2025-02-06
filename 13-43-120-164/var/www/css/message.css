@@ -49,17 +49,7 @@ body {
     margin-bottom: 0px; /* Additional margin to ensure full separation */
 }
 
-/* Logout icon */
-.logout-icon {
-    position: fixed; /* Fix the position to the top-right corner */
-    top: 10px;
-    right: 10px;
-    width: 40px; /* Adjust size as needed */
-    height: 40px;
-    cursor: pointer;
-    z-index: 1000; /* Ensure it is above other elements */
-}
-
+/* Update message-input-container */
 .message-input-container {
     position: fixed;
     bottom: 0;
@@ -70,20 +60,29 @@ body {
     border-top: 1px solid #333;
     box-sizing: border-box;
     display: flex;
+    gap: 10px;
     z-index: 100; /* Ensure input is above messages */
 }
 
-/* Input field styles */
-#messageInput {
-    flex: 1;
+/* Style both input fields consistently */
+#messageInput,
+#nicknameInput {
     padding: 15px;
     font-size: 16px;
-    border: 1px solid #333; /* Darker border color */
+    border: 1px solid #333;
     border-radius: 4px;
-    background-color: #2c2c2c; /* Dark background for input field */
-    color: #e0e0e0; /* Light text color */
-    margin-right: 10px; /* Space between input and button */
-    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    font-family: 'Roboto', sans-serif;
+}
+
+#messageInput {
+    flex: 3; /* Takes up more space */
+}
+
+#nicknameInput {
+    flex: 1; /* Takes up less space */
+    min-width: 120px; /* Minimum width for nickname */
 }
 
 /* Send button styles */
@@ -106,13 +105,27 @@ body {
 
 /* Responsive Design */
 @media (max-width: 600px) {
-    #messageInput {
+    .message-input-container {
+        flex-wrap: wrap;
+    }
+
+    #messageInput,
+    #nicknameInput {
         font-size: 14px; /* Slightly smaller font for smaller screens */
     }
 
+    #messageInput {
+        flex: 1 1 100%;
+        order: 2;
+    }
+
+    #nicknameInput {
+        flex: 1;
+        order: 1;
+    }
+
     #sendButton {
-        padding: 10px 15px; /* Adjust padding on smaller screens */
-        font-size: 14px;
+        order: 3;
     }
 }
 
