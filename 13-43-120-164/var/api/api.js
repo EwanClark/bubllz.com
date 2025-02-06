@@ -10,12 +10,7 @@ import readline from 'readline';
 import fs from 'fs';
 import moment from 'moment';
 import http from 'http';
-
-const app = express();
-dotenv.config({ path: '~/.env' });
-const port = 4000;
-const ip = process.env.IP;
-const server = http.createServer(app);
+import { WebSocketServer } from 'ws';
 
 // Rate limiter middleware
 const limiter = rateLimit({
@@ -24,20 +19,16 @@ const limiter = rateLimit({
     message: "Too many requests from this IP, please try again after 1 minute",
 });
 
-app.set("trust proxy", 1);
-app.use(
-    cors({
-        origin: "https://bubllz.com",
-        methods: ["GET", "POST"],
-        allowedHeaders: ["Content-Type", "Authorization", "token", "shorturl"],
-    })
-);
 
-
-app.use(express.json());
+const app = express();
 app.use(limiter);
-let messages = [];
-let clientpoll = [];
+app.use(express.json());
+dotenv.config({ path: '~/.env' });
+const port = 4000;
+const ip = process.env.IP;
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+const clients = new Map();
 let hatewords = [];
 let connection;
 const unknownroutepage = fs.readFileSync('../www/404.html', 'utf8');
@@ -51,6 +42,15 @@ const rl = readline.createInterface({
 let settings = {
     shorturlfilter: true
 };
+
+app.set("trust proxy", 1);
+app.use(
+    cors({
+        origin: "https://bubllz.com",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type", "Authorization", "token", "shorturl"],
+    })
+);
 
 function loadSettings() {
     try {
