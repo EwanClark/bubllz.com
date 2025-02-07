@@ -20,9 +20,6 @@ if (localStorage.getItem('username')) {
     document.getElementById('nicknameInput').value = localStorage.getItem('username');
     username = localStorage.getItem('username');
 }
-else {
-    let username = '';
-}
 
 ws.onopen = () => {
     console.log('Connected to chat server');
