@@ -23,7 +23,7 @@ const limiter = rateLimit({
 const app = express();
 app.use(limiter);
 app.use(express.json());
-dotenv.config({ path: '~/.env' });
+dotenv.config({ path: `${process.env.HOME}/.env` });
 const port = 4000;
 const ip = process.env.IP;
 const server = http.createServer(app);
@@ -240,6 +240,21 @@ app.get("/api/short/:shorturl", (req, res, next) => {
     );
 });
 
+
+app.post("/api/consolepassword", (req, res) => {
+    const userPassword = req.body.password;
+
+    if (!userPassword) {
+        return res.status(400).json({ error: "Password is required." });
+    }
+
+    if (process.env.CONSOLE_PASSWORD === userPassword) {
+        return res.status(200).json({ message: "Password is correct." });
+    }
+    else {
+        return res.status(401).json({ error: "Password is incorrect." });
+    }
+});
 
 app.post("/api/short/:shorturl/checkpassword", (req, res) => {
     const { shorturl } = req.params;
