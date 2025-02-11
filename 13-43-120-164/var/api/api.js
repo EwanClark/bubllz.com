@@ -12,18 +12,8 @@ import moment from 'moment';
 import http from 'http';
 import { WebSocketServer } from 'ws';
 
-// Rate limiter middleware
-const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000,
-    max: 200,
-    message: "Too many requests from this IP, please try again after 1 minute",
-});
-
-
-const app = express();
-app.use(limiter);
-app.use(express.json());
 dotenv.config({ path: '~/.env' });
+const app = express();
 const port = 4000;
 const ip = process.env.IP;
 const server = http.createServer(app);
@@ -33,16 +23,21 @@ let hatewords = [];
 let connection;
 const unknownroutepage = fs.readFileSync('../www/404.html', 'utf8');
 const checkpasswordpage = fs.readFileSync('../www/shorturlpassword.html', 'utf8')
-
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-
 let settings = {
     shorturlfilter: true
 };
+const RateLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 20,
+    message: "Too many requests from this IP, please try again after 1 minute",
+});
 
+app.use(express.json());
+app.use(RateLimiter);
 app.set("trust proxy", 1);
 app.use(
     cors({
