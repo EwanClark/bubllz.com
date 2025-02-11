@@ -10,9 +10,13 @@ function sendalert(message) {
 }
 
 function closeModal() {
-    document.getElementById('custom-alert').style.display = 'none';
+    document.getElementById('alert-ok').onclick = closeModal;
+    window.onkeydown = function (event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    };
 }
-
 
 function SignupButtonClicked() {
     var FirstNameInputElement = document.getElementById("Fname");
