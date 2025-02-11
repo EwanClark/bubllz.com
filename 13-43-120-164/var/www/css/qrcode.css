@@ -132,18 +132,6 @@ button:disabled {
     font-family: 'Roboto', sans-serif; /* From body */
 }
 
-/* Close Button */
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5em;
-    cursor: pointer;
-    color: white;
-    margin-top: 0; /* From body */
-    padding: 0; /* From reset */
-}
-
 /* Alert OK Button */
 #alert-ok {
     padding: 20px 40px; /* Consistent padding */
