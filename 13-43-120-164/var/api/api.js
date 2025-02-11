@@ -285,42 +285,6 @@ app.post("/api/short/:shorturl/checkpassword", (req, res) => {
     );
 });
 
-app.get("/api/shorturlanalytics", (req, res) => {
-    const shorturl = req.headers.shorturl;
-    if (!shorturl) {
-        return res.status(400).json({ error: "Short URL is required." });
-    }
-
-    connection.query(
-        `SELECT * FROM shorturlanalytics WHERE shorturl = ?`,
-        [shorturl],
-        (err, results) => {
-            if (err) {
-                console.error("Database query error:", err.stack);
-                return res.status(500).json({ error: "Database error" });
-            }
-            if (results.length === 0) {
-                connection.query(
-                    `SELECT * FROM shorturls WHERE shorturl = ?`,
-                    [shorturl],
-                    (err, results) => {
-                        if (err) {
-                            console.error("Database query error:", err.stack);
-                            return res.status(500).json({ error: "Database error" });
-                        }
-                        if (results.length === 0) {
-                            return res.status(404).json({ error: "Short URL not found" });
-                        } else {
-                            return res.status(201).json({ message: "No analytics found for this short URL" });
-                        }
-                    }
-                );
-            } else {
-                return res.status(200).json({ analytics: results });
-            }
-        }
-    );
-});
 
 app.post("/api/signup", async (req, res) => {
     const userData = req.body;
@@ -411,37 +375,37 @@ app.post("/api/login", (req, res) => {
 // WebSocket connection handler
 wss.on('connection', (ws) => {
     console.log('New WebSocket connection');
-    
+
     // Handle incoming messages
     ws.on('message', async (message) => {
         try {
             const data = JSON.parse(message);
-            
+
             // Validate username and message
             if (!data.username || !data.message) {
-                ws.send(JSON.stringify({ 
-                    error: "Username and message are required." 
+                ws.send(JSON.stringify({
+                    error: "Username and message are required."
                 }));
                 return;
             }
 
-            const fullMessage = { 
-                username: data.username, 
-                message: data.message 
+            const fullMessage = {
+                username: data.username,
+                message: data.message
             };
 
             // Broadcast message to all connected clients
             wss.clients.forEach((client) => {
                 if (client.readyState === 1) { // WebSocket.OPEN
-                    client.send(JSON.stringify({ 
-                        message: fullMessage 
+                    client.send(JSON.stringify({
+                        message: fullMessage
                     }));
                 }
             });
         } catch (error) {
             console.error('Error processing message:', error);
-            ws.send(JSON.stringify({ 
-                error: "Invalid message format" 
+            ws.send(JSON.stringify({
+                error: "Invalid message format"
             }));
         }
     });
