@@ -18,7 +18,6 @@ const port = 4000;
 const ip = process.env.IP;
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
-const clients = new Map();
 let hatewords = [];
 let connection;
 const unknownroutepage = fs.readFileSync('../www/404.html', 'utf8');
@@ -172,8 +171,21 @@ function showHelp() {
     console.log('exit - Exit the application.');
 }
 
-handleDisconnect();
+function broadcastUserList() {
+    const usernames = Array.from(wss.clients)
+        .filter(client => client.username) // Only active users
+        .map(client => client.username); // Get usernames
 
+    // Send the updated user list to all clients
+    wss.clients.forEach(client => {
+        client.send(JSON.stringify({
+            type: 'userList',
+            users: usernames
+        }));
+    });
+}
+
+handleDisconnect();
 
 app.get("/api/short/:shorturl", (req, res, next) => {
     const { shorturl } = req.params;
@@ -367,45 +379,93 @@ app.post("/api/login", (req, res) => {
         }
     );
 });
+
 // WebSocket connection handler
 wss.on('connection', (ws) => {
-    console.log('New WebSocket connection');
-
-    // Handle incoming messages
-    ws.on('message', async (message) => {
+    // Handle the initial message which must be a username
+    ws.once('message', (message) => {
         try {
             const data = JSON.parse(message);
 
-            // Validate username and message
-            if (!data.username || !data.message) {
+            if (!data.username || typeof data.username !== 'string') {
                 ws.send(JSON.stringify({
-                    error: "Username and message are required."
+                    type: 'error',
+                    message: 'First message must include a username.'
                 }));
+                ws.close();
                 return;
             }
 
-            const fullMessage = {
-                username: data.username,
-                message: data.message
-            };
+            const newUsername = data.username.trim();
 
-            // Broadcast message to all connected clients
-            wss.clients.forEach((client) => {
-                if (client.readyState === 1) { // WebSocket.OPEN
-                    client.send(JSON.stringify({
-                        message: fullMessage
+            // Validate username
+            const usernames = Array.from(wss.clients)
+                .filter(client => client.username)
+                .map(client => client.username);
+
+            if (newUsername.length === 0) {
+                ws.send(JSON.stringify({
+                    type: 'error',
+                    message: 'Username cannot be empty.'
+                }));
+                ws.close();
+                return;
+            }
+
+            if (usernames.includes(newUsername)) {
+                ws.send(JSON.stringify({
+                    type: 'error',
+                    message: 'Username is already taken. Please choose another.'
+                }));
+                ws.close();
+                return;
+            }
+
+            // Assign username and set up regular message handling
+            ws.username = newUsername;
+            broadcastUserList();
+
+            // Set up regular message handling after username is established
+            ws.on('message', (message) => {
+                try {
+                    const data = JSON.parse(message);
+
+                    if (data.type === 'message' && data.message) {
+                        const fullMessage = {
+                            username: ws.username,
+                            message: data.message
+                        };
+
+                        // Broadcast the message to all connected clients
+                        wss.clients.forEach(client => {
+                            client.send(JSON.stringify({
+                                type: 'message',
+                                message: fullMessage
+                            }));
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error processing message:', error);
+                    ws.send(JSON.stringify({
+                        type: 'error',
+                        message: 'Invalid message format.'
                     }));
                 }
             });
         } catch (error) {
-            console.error('Error processing message:', error);
+            console.error('Error processing username:', error);
             ws.send(JSON.stringify({
-                error: "Invalid message format"
+                type: 'error',
+                message: 'Invalid username format.'
             }));
+            ws.close();
         }
     });
 
-    // Handle errors
+    ws.on('close', () => {
+        broadcastUserList(); // Update the user list after disconnection
+    });
+
     ws.on('error', (error) => {
         console.error('WebSocket error:', error);
     });

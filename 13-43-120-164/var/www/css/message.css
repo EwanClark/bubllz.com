@@ -1,222 +1,265 @@
-/* Import Google Font "Roboto" */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+/* Base styles */
+:root {
+    --primary-color: #007bff;
+    --bg-dark: #1a1a1a;
+    --bg-darker: #1e1e1e;
+    --bg-lightest: #333;
+    --text-normal: #e0e0e0;
+    --text-muted: #949BA4;
+    --border-color: #555;
+}
 
-/* Reset default browser styles */
-body, h1, p, input, button {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* General body styles */
 body {
-    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
-    background-color: #121212; /* Dark background color */
-    color: #e0e0e0; /* Light text color for contrast */
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-normal);
     height: 100vh;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; /* Prevents body scroll */
+    overflow: hidden;
 }
 
-/* Container for the chat app */
+button {
+    font-size: 0.9em;
+    text-align: center;
+}
+
+/* Chat container */
 .chat-container {
-    background-color: #1f1f1f; /* Slightly lighter dark color for the container */
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Darker shadow for contrast */
-    width: 100%; /* Full width */
-    max-width: 100%;
-    height: 100%; /* Full height of the viewport */
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Hide any overflow */
 }
 
-/* Area to display messages */
+/* Header */
+.chat-header {
+    background-color: var(--bg-darker);
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
+.chat-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-normal);
+}
+
+.online-count {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Main chat area */
+.chat-main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* User list */
+.user-list {
+    width: 240px;
+    background-color: var(--bg-darker);
+    padding: 16px;
+    border-right: 1px solid var(--border-color);
+}
+
+.user-list h3 {
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+}
+
+.users-container div {
+    padding: 8px 12px;
+    margin: 2px 0;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.users-container div:hover {
+    background-color: var(--bg-lightest);
+}
+
+/* Chat content */
+.chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Message display */
 .message-display-area {
     flex: 1;
-    padding: 10px 20px 80px; /* Added extra bottom padding to prevent overlap */
+    padding: 24px;
     overflow-y: auto;
-    overflow-x: hidden;
-    background-color: #1f1f1f;
-    color: #e0e0e0;
-    border-bottom: 1px solid #333;
-    font-size: 16px;
-    scrollbar-width: thin;
-    scrollbar-color: #007bff #1e1e1e;
-    margin-bottom: 0px; /* Additional margin to ensure full separation */
+    background-color: var(--bg-darker);
 }
 
-/* Update message-input-container */
+.message-display-area div {
+    padding: 4px 0;  /* Reduced from 8px to 4px */
+    color: var(--text-normal);
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+/* Input area */
 .message-input-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    background-color: #2c2c2c;
-    border-top: 1px solid #333;
-    box-sizing: border-box;
+    padding: 16px;
+    background-color: var(--bg-dark);
+    border-top: 1px solid var(--border-color);
     display: flex;
-    gap: 10px;
-    z-index: 100; /* Ensure input is above messages */
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* Style both input fields consistently */
-#messageInput,
-#nicknameInput {
-    padding: 15px;
-    font-size: 16px;
-    border: 1px solid #333;
-    border-radius: 4px;
-    background-color: #2c2c2c;
-    color: #e0e0e0;
-    font-family: 'Roboto', sans-serif;
-}
-
-#messageInput {
-    flex: 3; /* Takes up more space */
-}
-
-#nicknameInput {
-    flex: 1; /* Takes up less space */
-    min-width: 120px; /* Minimum width for nickname */
-}
-
-/* Send button styles */
-#sendButton {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff; /* Blue background color */
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    min-width: 100px; /* Fixed width to resemble Discord's send button */
-    font-family: 'Roboto', sans-serif; /* Apply the Roboto font */
-}
-
-#sendButton:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-    .message-input-container {
-        flex-wrap: wrap;
-    }
-
-    #messageInput,
-    #nicknameInput {
-        font-size: 14px; /* Slightly smaller font for smaller screens */
-    }
-
-    #messageInput {
-        flex: 1 1 100%;
-        order: 2;
-    }
-
-    #nicknameInput {
-        flex: 1;
-        order: 1;
-    }
-
-    #sendButton {
-        order: 3;
-    }
-}
-
-/* Modal Background */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
+.message-controls {
+    display: flex;
+    gap: 12px;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+}
+
+/* Add container for inputs to maintain consistent width */
+.input-wrapper {
+    flex: 3; /* This will make the input take up more space relative to the button */
+}
+
+input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-lightest);
+    color: var(--text-normal);
+    font-size: 15px;
+    transition: background-color 0.2s;
+}
+
+input:focus {
+    outline: none;
+    background-color: var(--bg-darker);
+}
+
+input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Remove the margin from nickname input */
+#nicknameInput {
+    margin-bottom: 0;
+}
+
+/* Make both input containers consistent */
+.nickname-container,
+.message-input-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Adjust button width */
+#sendButton,
+#connectButton {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    flex: 1; /* Make buttons take up less space relative to input */
+    min-width: 100px; /* Set minimum width for buttons */
+    max-width: 150px; /* Set maximum width for buttons */
+}
+
+#sendButton:disabled,
+#connectButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#sendButton:not(:disabled):hover,
+#connectButton:not(:disabled):hover {
+    background-color: #0056b3;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
     padding: 20px;
-    margin-top: 0; /* From body */
-    box-sizing: border-box; /* From body */
+    z-index: 1000;
 }
 
-/* Modal Content */
 .modal-content {
-    background-color: #1e1e1e; /* Darker background */
-    color: white;
+    background-color: var(--bg-darker);
+    padding: 24px;
     border-radius: 8px;
-    padding: 20px; /* Padding for content */
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Shadow for depth */
     max-width: 400px;
     width: 100%;
-    font-family: 'Roboto', sans-serif; /* From body */
+    text-align: center;
 }
 
-/* Close Button */
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5em;
-    cursor: pointer;
-    color: white;
-    margin-top: 0; /* From body */
-    padding: 0; /* From reset */
+#alert-message {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
 }
 
-/* Alert OK Button */
 #alert-ok {
-    padding: 20px 40px; /* Consistent padding */
-    background-color: #0056b3; /* Dark blue background */
-    color: #fff; /* White text */
-    border: none; /* No border */
-    border-radius: 8px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s ease; /* Smooth color transition */
-    width: 240px; /* Consistent width */
-    margin-top: 15px; /* Vertical spacing */
-    margin-left: 0; /* Reset margin */
-    box-sizing: border-box; /* From reset */
-    font-family: 'Roboto', sans-serif; /* From body */
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    width: 100%;
 }
 
-/* Custom Scrollbar Styles */
-/* For Webkit browsers (Chrome, Safari) */
+#alert-ok:hover {
+    background-color: #0056b3;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
-    width: 12px; /* Width of the scrollbar */
-    background-color: #1e1e1e; /* Consistent background color */
+    width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #1e1e1e; /* Black background color for scrollbar track */
-    border-radius: 8px; /* Rounded corners of the scrollbar track */
+    background: var(--bg-darker);
+    border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #007bff; /* Blue color for the scrollbar thumb */
-    border-radius: 8px; /* Rounded corners of the scrollbar thumb */
-    border: 3px solid #1e1e1e; /* Creates a border to give padding effect */
+    background: var(--primary-color);
+    border-radius: 8px;
+    border: 3px solid var(--bg-darker);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #0056b3; /* Darker blue on hover */
+    background: #0056b3;
 }
 
-/* Firefox Scrollbar Styles */
 * {
-    scrollbar-width: thin; /* Thin scrollbar */
-    scrollbar-color: #007bff #1e1e1e; /* Thumb and track colors */
-}
-
-/* Ensure scrollbar is visible on the message display area */
-.message-display-area {
-    overflow-y: auto; /* Force vertical scrolling */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--bg-darker);
 }

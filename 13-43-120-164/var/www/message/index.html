@@ -1,32 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messaging App</title>
+    <title>Bubllz Chat</title>
     <link rel="stylesheet" href="../css/message.css">
     <link rel="icon" href="../Assets/Logo/favicon_io/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="modal" id="custom-alert">
         <div class="modal-content">
-            <span class="modal-close" id="close-alert"></span>
-            <p id="alert-message">This is a custom alert!</p>
+            <p id="alert-message"></p>
             <button id="alert-ok">OK</button>
         </div>
     </div>
+
     <div class="chat-container">
-        <div id="messageDisplayArea" class="message-display-area">
-            <div class="message-gap-indicator"></div>
-            <!-- Messages will appear here -->
+        <div class="chat-header">
+            <h1>Bubllz Chat</h1>
+            <div class="online-count"></div>
         </div>
-        <div class="message-input-container">
-            <input type="text" id="messageInput" placeholder="Type your message..." required>
-            <input type="text" id="nicknameInput" placeholder="Type your nickname..." required>
-            <button id="sendButton">Send</button>
+
+        <div class="chat-main">
+            <div class="user-list" id="userList">
+                <h3>Online Users</h3>
+                <div class="users-container"></div>
+            </div>
+
+            <div class="chat-content">
+                <div id="messageDisplayArea" class="message-display-area"></div>
+
+                <div class="message-input-container">
+                    <div class="message-controls">
+                        <input type="text" id="nicknameInput" placeholder="Choose a nickname..." maxlength="20" autocomplete="off">
+                        <button id="connectButton" disabled>Connect!</button>
+                    </div>
+                    <div class="message-controls">
+                        <input type="text" id="messageInput" placeholder="Type your message..." disabled autocomplete="off">
+                        <button id="sendButton" disabled>Send</button>
+                    </div>
+                </div>
+                
+            </div>
         </div>
     </div>
-
     <script src="../js/message.js"></script>
 </body>
+
 </html>

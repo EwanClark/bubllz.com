@@ -1,9 +1,6 @@
 function sendalert(message) {
-    // Set the message in the modal
     document.getElementById('alert-message').textContent = message;
-    // Show the modal
     document.getElementById('custom-alert').style.display = 'flex';
-    // Close the modal when clicking the close button or OK button
     document.getElementById('alert-ok').onclick = closeModal;
 }
 
@@ -11,65 +8,125 @@ function closeModal() {
     document.getElementById('custom-alert').style.display = 'none';
 }
 
-// Get message display area
 const messageDisplay = document.getElementById('messageDisplayArea');
+const userListDisplay = document.getElementById('userList').querySelector('.users-container');
+const nicknameInput = document.getElementById('nicknameInput');
+const messageInput = document.getElementById('messageInput');
+const sendButton = document.getElementById('sendButton');
+const connectButton = document.getElementById('connectButton')
+let ws = null;
+let username = null;
+let done = false;
+connectButton.disabled = false;
 
-// Initialize WebSocket connection
-const ws = new WebSocket('wss://bubllz.com/api');
-if (localStorage.getItem('username')) {
-    document.getElementById('nicknameInput').value = localStorage.getItem('username');
-    username = localStorage.getItem('username');
-}
-
-ws.onopen = () => {
-    console.log('Connected to chat server');
-};
-
-ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.error) {
-        sendalert(data.error);
-    } else if (data.message) {
-        displayMessage(data.message.username, data.message.message);
+function initializeWebSocket(username) {
+    if (ws) {
+        ws.close();
     }
-};
+
+    ws = new WebSocket('wss://bubllz.com/api');
+
+    ws.onopen = () => {
+        if (!done) {
+            sendalert('Connected to chat server!');
+            done = true;
+        } else {
+            sendalert('Reconnected to chat server!');
+        }
+        messageInput.disabled = false;
+        sendButton.disabled = false;
+        ws.send(JSON.stringify({ username: username }));
+
+    };
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'error') {
+            sendalert(data.message);
+            if (data.message.includes('Username')) {
+                username = null;
+            }
+        } else if (data.type === 'message') {
+            displayMessage(data.message.username, data.message.message);
+        } else if (data.type === 'userList') {
+            updateUserList(data.users);
+        }
+    };
+
+    ws.onclose = () => {
+        messageInput.disabled = true;
+        sendButton.disabled = true;
+    };
+
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        sendalert('Connection error. Please try again.');
+    };
+}
 
 function displayMessage(username, message) {
     const messageDiv = document.createElement('div');
     messageDiv.textContent = `${username}: ${message}`;
     messageDisplay.appendChild(messageDiv);
-    // Auto scroll to bottom
     messageDisplay.scrollTop = messageDisplay.scrollHeight;
 }
 
+function updateUserList(users) {
+    userListDisplay.innerHTML = '';
+    document.querySelector('.online-count').textContent = `${users.length} online`;
+    
+    users.forEach(user => {
+        const userDiv = document.createElement('div');
+        userDiv.textContent = user;
+        userListDisplay.appendChild(userDiv);
+    });
+}
+
 function sendMessage() {
-    const messageInput = document.getElementById('messageInput');
     const message = messageInput.value.trim();
 
-    if (!message) {
-        return; // Don't send empty messages
+    if (!message || !ws || ws.readyState !== WebSocket.OPEN) {
+        return;
     }
 
     ws.send(JSON.stringify({
-        username: username,
+        type: 'message',
         message: message
     }));
 
-    // Clear input after sending
     messageInput.value = '';
 }
 
-// Event listeners
-document.getElementById('sendButton').addEventListener('click', sendMessage);
+function connectToChat() {
+    const newUsername = nicknameInput.value.trim();
+    if (newUsername) {
+        messageInput.disabled = false;
+        sendButton.disabled = false;
+        username = newUsername;
+        initializeWebSocket(newUsername);
+    } else {
+        sendalert('Please enter a valid username.');
+    }
+}
 
-document.getElementById('messageInput').addEventListener('keypress', function(event) {
+// Event listeners
+sendButton.addEventListener('click', sendMessage);
+connectButton.addEventListener('click', connectToChat);
+
+messageInput.addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
         sendMessage();
     }
 });
 
-document.getElementById('nicknameInput').addEventListener('input', function() {
-    localStorage.setItem('username', document.getElementById('nicknameInput').value);
-    username = document.getElementById('nicknameInput').value;
+nicknameInput.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        connectToChat();
+    }
 });
+
+// Initial setup
+sendalert('Enter a username to start chatting.');
