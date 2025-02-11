@@ -1,21 +1,16 @@
 function sendalert(message) {
-    // Set the message in the modal
     document.getElementById('alert-message').textContent = message;
-
-    // Show the modal
     document.getElementById('custom-alert').style.display = 'flex';
-
-    // Close the modal when clicking the close button or OK button
-    document.getElementById('alert-ok').onclick = closeModal;
-}
-
-function closeModal() {
     document.getElementById('alert-ok').onclick = closeModal;
     window.onkeydown = function (event) {
         if (event.key === 'Escape') {
             closeModal();
         }
     };
+}
+
+function closeModal() {
+    document.getElementById('custom-alert').style.display = 'none';
 }
 
 function SignupButtonClicked() {
