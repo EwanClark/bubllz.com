@@ -17,7 +17,9 @@ const app = express();
 const port = 4000;
 const ip = process.env.IP;
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
+const messagewss = new WebSocketServer({ noServer: true });
+// const p2pwss = new WebSocketServer({ noServer: true });
+// const sessions = new Map();
 let hatewords = [];
 let connection;
 const unknownroutepage = fs.readFileSync('../www/404.html', 'utf8');
@@ -172,12 +174,12 @@ function showHelp() {
 }
 
 function broadcastUserList() {
-    const usernames = Array.from(wss.clients)
+    const usernames = Array.from(messagewss.clients)
         .filter(client => client.username) // Only active users
         .map(client => client.username); // Get usernames
 
     // Send the updated user list to all clients
-    wss.clients.forEach(client => {
+    messagewss.clients.forEach(client => {
         client.send(JSON.stringify({
             type: 'userList',
             users: usernames
@@ -186,6 +188,18 @@ function broadcastUserList() {
 }
 
 handleDisconnect();
+
+server.on("upgrade", (request, socket, head) => {
+    if (request.url === "/api/messagewss") {
+        messagewss.handleUpgrade(request, socket, head, (ws) => {
+            messagewss.emit("connection", ws, request);
+        });
+    } else {
+        // Reject other WebSocket connections
+        socket.write("HTTP/1.1 400 Bad Request\r\n\r\n");
+        socket.destroy();
+    }
+});
 
 app.get("/api/short/:shorturl", (req, res, next) => {
     const { shorturl } = req.params;
@@ -381,7 +395,7 @@ app.post("/api/login", (req, res) => {
 });
 
 // WebSocket connection handler
-wss.on('connection', (ws) => {
+messagewss.on('connection', (ws) => {
     // Handle the initial message which must be a username
     ws.once('message', (message) => {
         try {
@@ -399,7 +413,7 @@ wss.on('connection', (ws) => {
             const newUsername = data.username.trim();
 
             // Validate username
-            const usernames = Array.from(wss.clients)
+            const usernames = Array.from(messagewss.clients)
                 .filter(client => client.username)
                 .map(client => client.username);
 
@@ -437,7 +451,7 @@ wss.on('connection', (ws) => {
                         };
 
                         // Broadcast the message to all connected clients
-                        wss.clients.forEach(client => {
+                        messagewss.clients.forEach(client => {
                             client.send(JSON.stringify({
                                 type: 'message',
                                 message: fullMessage
@@ -470,6 +484,8 @@ wss.on('connection', (ws) => {
         console.error('WebSocket error:', error);
     });
 });
+
+
 
 app.get('/api/validurl', async (req, res) => {
     // Check if the URL query parameter is present

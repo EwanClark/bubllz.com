@@ -29,7 +29,7 @@ function initializeWebSocket(username) {
         ws.close();
     }
 
-    ws = new WebSocket('wss://bubllz.com/api');
+    ws = new WebSocket('wss://bubllz.com/api/messagewss');
 
     ws.onopen = () => {
         if (!done) {
