@@ -18,8 +18,6 @@ const port = 4000;
 const ip = process.env.IP;
 const server = http.createServer(app);
 const messagewss = new WebSocketServer({ noServer: true });
-// const p2pwss = new WebSocketServer({ noServer: true });
-// const sessions = new Map();
 let hatewords = [];
 let connection;
 const unknownroutepage = fs.readFileSync('../www/404.html', 'utf8');
