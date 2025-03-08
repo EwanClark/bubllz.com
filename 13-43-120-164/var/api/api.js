@@ -259,6 +259,43 @@ app.get("/api/short/:shorturl", (req, res, next) => {
     );
 });
 
+app.get("/api/shorturlanalytics", (req, res) => {
+    const shorturl = req.headers.shorturl;
+    if (!shorturl) {
+        return res.status(400).json({ error: "Short URL is required." });
+    }
+
+    connection.query(
+        `SELECT * FROM shorturlanalytics WHERE shorturl = ?`,
+        [shorturl],
+        (err, results) => {
+            if (err) {
+                console.error("Database query error:", err.stack);
+                return res.status(500).json({ error: "Database error" });
+            }
+            if (results.length === 0) {
+                connection.query(
+                    `SELECT * FROM shorturls WHERE shorturl = ?`,
+                    [shorturl],
+                    (err, results) => {
+                        if (err) {
+                            console.error("Database query error:", err.stack);
+                            return res.status(500).json({ error: "Database error" });
+                        }
+                        if (results.length === 0) {
+                            return res.status(404).json({ error: "Short URL not found" });
+                        } else {
+                            return res.status(201).json({ message: "No analytics found for this short URL" });
+                        }
+                    }
+                );
+            } else {
+                return res.status(200).json({ analytics: results });
+            }
+        }
+    );
+});
+
 app.post("/api/short/:shorturl/checkpassword", (req, res) => {
     const { shorturl } = req.params;
     const userPassword = req.body.password;
@@ -337,7 +374,7 @@ app.post("/api/signup", async (req, res) => {
                             hashedPassword,
                             token,
                         ],
-                        (err, results) => {
+                        (err) => {
                             if (err) {
                                 console.error("Error executing query:", err.stack);
                                 return res.status(500).json({ error: "Database error" });
