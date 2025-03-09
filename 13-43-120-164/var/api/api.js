@@ -240,7 +240,13 @@ app.get("/api/short/:shorturl", (req, res, next) => {
                                 }
                                 else {
                                     if (password) {
-                                        return res.send(checkpasswordpage);
+                                        const analyticId = results.insertId; // Use insertId from the query response
+                                        // Inject a small script to update the browser's URL with the analytic id
+                                        const updatedPage = checkpasswordpage.replace(
+                                            '<!--analyticId-->',
+                                            `<script>history.replaceState({}, '', '?aid=${analyticId}');</script>`
+                                        );
+                                        return res.send(updatedPage);
                                     }
                                     if (!/^https?:\/\//i.test(referrer)) {
                                         return res.redirect(`https://${referrer}`);
@@ -296,9 +302,14 @@ app.get("/api/shorturlanalytics", (req, res) => {
     );
 });
 
-app.post("/api/short/:shorturl/checkpassword", (req, res) => {
-    const { shorturl } = req.params;
+app.post("/api/short/:id/checkpassword", (req, res) => {
+    const { id } = req.params;
     const userPassword = req.body.password;
+    const shorturl = req.body.shorturl;
+
+    if (!id || !userPassword || !shorturl) {
+        return res.status(400).json({ error: "ID, password, and short URL are required." });
+    }
 
     connection.query(
         `SELECT password, redirecturl FROM shorturls WHERE shorturl = ?`,
@@ -315,20 +326,21 @@ app.post("/api/short/:shorturl/checkpassword", (req, res) => {
 
             if (userPassword === password) {
                 connection.query(
-                    `UPDATE shorturlanalytics SET password_status = ? WHERE shorturl = ?`,
-                    ['Yes', shorturl],
+                    `UPDATE shorturlanalytics SET password_status = ? WHERE id = ?`,
+                    ['Yes', id],
                     (err, results) => {
                         if (err) {
                             console.error("Database query error:", err.stack);
-                            return res.status(500).json({ error: "Database error getting analytic" });
+                            return res.status(500).json({ error: "Database error updating analytic" });
                         }
-                        if (results.length === 0) {
+                        // Check if any rows were updated
+                        if (results.affectedRows === 0) {
                             return res.status(404).json({ error: "Analytics not found for shorturl" });
                         } else {
                             if (!/^https?:\/\//i.test(redirecturl)) {
                                 return res.status(200).json({ redirecturl: `https://${redirecturl}` });
                             } else {
-                                return res.status(200).json({ redirecturl: redirecturl });
+                                return res.status(200).json({ redirecturl });
                             }
                         }
                     }
@@ -340,7 +352,6 @@ app.post("/api/short/:shorturl/checkpassword", (req, res) => {
         }
     );
 });
-
 
 app.post("/api/signup", async (req, res) => {
     const userData = req.body;

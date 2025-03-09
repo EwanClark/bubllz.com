@@ -1,3 +1,5 @@
+const queryParams = new URLSearchParams(window.location.search);
+const id = queryParams.get("aid");
 const path = window.location.pathname;
 const shorturl = path.split('/').pop();
 
@@ -5,13 +7,14 @@ function checkPassword() {
     const input = document.getElementById("passwordInput").value;
     const message = document.getElementById("message");
 
-    fetch(`https://bubllz.com/api/short/${shorturl}/checkpassword`, {
+    fetch(`https://bubllz.com/api/short/${id}/checkpassword`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "password": input
+            "password": input,
+            "shorturl": shorturl
         })
     })
         .then(response => {
