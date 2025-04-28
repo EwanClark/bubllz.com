@@ -147,3 +147,84 @@ button:disabled {
     box-sizing: border-box; /* From reset */
     font-family: 'Roboto', sans-serif; /* From body */
 }
+
+
+@media (max-width: 600px) {
+    body {
+        align-items: flex-start;
+        height: auto;
+        min-height: 100vh;
+        padding: 0;
+    }
+
+    .container {
+        width: 100vw;
+        min-width: 0;
+        max-width: 100vw;
+        height: auto;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 10px 0 30px 0;
+    }
+
+    h1 {
+        font-size: 1.3em;
+        margin-bottom: 12px;
+    }
+
+    #data {
+        width: 90vw;
+        max-width: 98vw;
+        min-width: 0;
+        font-size: 1em;
+        height: 40px;
+        padding: 8px;
+    }
+
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 90vw;
+        max-width: 98vw;
+        align-items: stretch;
+        margin: 0 auto 10px auto;
+    }
+
+    button {
+        width: 100%;
+        min-width: 0;
+        height: 48px;
+        font-size: 1em;
+        padding: 10px 0;
+        margin-top: 0;
+    }
+
+    #qr-display {
+        width: 90vw;
+        max-width: 98vw;
+        height: 90vw;
+        max-height: 98vw;
+        min-width: 0;
+        min-height: 0;
+        padding: 10px;
+        font-size: 0.95em;
+    }
+
+    .qr-display p {
+        font-size: 0.95em;
+    }
+
+    .modal-content {
+        max-width: 95vw;
+        padding: 10px;
+        font-size: 1em;
+    }
+
+    #alert-ok {
+        width: 100%;
+        padding: 15px 0;
+        font-size: 1em;
+    }
+}

@@ -316,7 +316,6 @@ body.dark-mode button:hover {
     font-family: 'Roboto', sans-serif; /* From body */
 }
 
-
 @media (max-width: 768px) {
     /* Make the container take full width and remove fixed margin */
     .container {
