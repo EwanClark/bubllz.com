@@ -315,3 +315,78 @@ body.dark-mode button:hover {
     box-sizing: border-box; /* From reset */
     font-family: 'Roboto', sans-serif; /* From body */
 }
+
+
+@media (max-width: 768px) {
+    /* Make the container take full width and remove fixed margin */
+    .container {
+        width: 100%;
+        margin-top: 80px;
+        padding: 10px;
+        border-radius: 0;
+        box-shadow: none;
+        overflow-x: auto;
+    }
+
+    /* Make the table horizontally scrollable */
+    .container table {
+        display: block;
+        width: 100%;
+        min-width: 700px; /* Minimum width for table, adjust as needed */
+        overflow-x: auto;
+        font-size: 0.95em;
+    }
+
+    /* Table headers and cells: reduce padding */
+    th, td {
+        padding: 8px 6px;
+        font-size: 0.95em;
+        word-break: break-word;
+    }
+
+    /* Header: stack vertically on mobile */
+    .header-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    header {
+        padding: 10px 5px;
+        font-size: 1em;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        min-width: 0;
+    }
+
+    header h1 {
+        font-size: 1.2em;
+        word-break: break-word;
+    }
+
+    header p {
+        font-size: 1em;
+        padding: 0;
+    }
+
+    #toggleDarkMode {
+        width: 100%;
+        margin: 0;
+        padding: 10px 0;
+    }
+
+    /* Modal: make sure it fits on small screens */
+    .modal-content {
+        max-width: 95vw;
+        padding: 10px;
+        font-size: 1em;
+    }
+
+    #alert-ok {
+        width: 100%;
+        padding: 15px 0;
+        font-size: 1em;
+    }
+}
