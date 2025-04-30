@@ -271,17 +271,9 @@ input:disabled {
 
 @media (max-width: 700px) {
     html, body {
-        min-height: 100vh;
-        height: auto;
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
-
-    body {
-        min-height: 100vh;
-        height: auto;
-        overflow-x: hidden;
-        overflow-y: auto;
+        height: 100dvh;
+        min-height: 100dvh;
+        overflow: hidden;
     }
 
     .chat-container {
