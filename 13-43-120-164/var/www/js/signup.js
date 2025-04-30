@@ -42,7 +42,7 @@ function SignupButtonClicked() {
         return;
     }
     else {
-        fetch("https://bubllz.com/api/signup", {
+        fetch("https://ewanc.dev/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -69,7 +69,7 @@ function SignupButtonClicked() {
             console.log('Success:', responseData);
             sendalert(`User signed up successfully! as ${UsernameInput}`);
             document.getElementById('alert-ok').addEventListener('click', function () {
-                window.location.href = 'https://bubllz.com/login';
+                window.location.href = 'https://ewanc.dev/login';
             });
         })
         .catch(error => {

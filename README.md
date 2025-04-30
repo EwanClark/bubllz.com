@@ -1,1 +1,1 @@
-# Code for [bubllz.com](https://bubllz.com) website
+# Code for [ewanc.dev](https://ewanc.dev) website

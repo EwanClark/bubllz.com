@@ -23,7 +23,7 @@ function LoginButtonClicked() {
         return sendalert("Please fill out all fields");
     } else {
         var login = true;
-        fetch("https://bubllz.com/api/login", {
+        fetch("https://ewanc.dev/api/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -46,7 +46,7 @@ function LoginButtonClicked() {
                 localStorage.setItem('token', data.message);
                 sendalert(`User logged in successfully! as ${usernameInputted}`);
                 document.getElementById('alert-ok').addEventListener('click', function () {
-                    window.location.href = 'https://bubllz.com';
+                    window.location.href = 'https://ewanc.dev';
                 });
             }
         })

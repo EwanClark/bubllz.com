@@ -37,7 +37,7 @@ async function addShortUrl(redirectUrl, token, customshorturl, password) {
     }
 
     try {
-        const response = await fetch('https://bubllz.com/api/addshorturl', {
+        const response = await fetch('https://ewanc.dev/api/addshorturl', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ async function addShortUrl(redirectUrl, token, customshorturl, password) {
             document.getElementById('shortenButton').disabled = false;
             sendalert("No token provided. Please log in again.");
             document.getElementById('alert-ok').addEventListener('click', function () {
-                window.location.href = 'https://bubllz.com/login';
+                window.location.href = 'https://ewanc.dev/login';
             });
         } else if (response.status === 401) {
             document.getElementById('shortenButton').disabled = false;
@@ -89,7 +89,7 @@ async function addShortUrl(redirectUrl, token, customshorturl, password) {
 
 // Function to remove short URL
 async function removeshorturl(shorturlcode, token, urlItem) {
-    fetch("https://bubllz.com/api/removeshorturl", {
+    fetch("https://ewanc.dev/api/removeshorturl", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -135,12 +135,12 @@ if (localStorage.getItem('dark-mode') === 'enabled') {
 if (!localStorage.getItem('token')) {
     sendalert('Please login to create or view your short URLs.')
     document.getElementById('alert-ok').addEventListener('click', function () {
-        window.location.href = 'https://bubllz.com/login';
+        window.location.href = 'https://ewanc.dev/login';
     });
 }
 
 // Fetch user's short URLs
-fetch('https://bubllz.com/api/getshorturls', {
+fetch('https://ewanc.dev/api/getshorturls', {
     method: 'GET',
     headers: {
         'token': localStorage.getItem('token')
@@ -177,10 +177,10 @@ fetch('https://bubllz.com/api/getshorturls', {
             }
 
             urlText.innerHTML = `
-                ${lockedorunlocked}&nbsp;<a href="https://bubllz.com/api/short/${url.shorturl}">bubllz.com/api/short/${url.shorturl}</a>
+                ${lockedorunlocked}&nbsp;<a href="https://ewanc.dev/api/short/${url.shorturl}">ewanc.dev/api/short/${url.shorturl}</a>
                 &nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;
                 <a href="${redirecturl}">${url.redirecturl}</a>
-                &nbsp;&nbsp;||&nbsp;&nbsp;<a href="https://bubllz.com/shorturlanalytics?shorturl=${url.shorturl}">View Analytics</a>
+                &nbsp;&nbsp;||&nbsp;&nbsp;<a href="https://ewanc.dev/shorturlanalytics?shorturl=${url.shorturl}">View Analytics</a>
             `;
             const deleteButton = document.createElement('button');
             deleteButton.className = 'delete-btn';
@@ -202,7 +202,7 @@ fetch('https://bubllz.com/api/getshorturls', {
                 if (!localStorage.getItem('token')) {
                     sendalert('Please login to create or view your short URLs.');
                     document.getElementById('alert-ok').addEventListener('click', function () {
-                        window.location.href = 'https://bubllz.com/login';
+                        window.location.href = 'https://ewanc.dev/login';
                     });
                 }
                 removeshorturl(shortUrlCode, localStorage.getItem('token'), urlItem);
@@ -243,10 +243,10 @@ fetch('https://bubllz.com/api/getshorturls', {
                     const urlText = document.createElement('div');
                     urlText.className = 'url-text';
                     urlText.innerHTML = `
-                        ${lockedorunlocked}&nbsp;<a href="https://bubllz.com/api/short/${shorturlcode}">bubllz.com/api/short/${shorturlcode}</a>
+                        ${lockedorunlocked}&nbsp;<a href="https://ewanc.dev/api/short/${shorturlcode}">ewanc.dev/api/short/${shorturlcode}</a>
                         &nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;
                         <a href="${urltouse}">${url}</a>
-                        &nbsp;&nbsp;||&nbsp;&nbsp;<a href="https://bubllz.com/shorturlanalytics?shorturl=${shorturlcode}">View Analytics</a>
+                        &nbsp;&nbsp;||&nbsp;&nbsp;<a href="https://ewanc.dev/shorturlanalytics?shorturl=${shorturlcode}">View Analytics</a>
                     `;
                     const deleteButton = document.createElement('button');
                     deleteButton.className = 'delete-btn';
@@ -268,7 +268,7 @@ fetch('https://bubllz.com/api/getshorturls', {
                         if (!localStorage.getItem('token')) {
                             sendalert('Please login to create or view your short URLs.');
                             document.getElementById('alert-ok').addEventListener('click', function () {
-                                window.location.href = 'https://bubllz.com/login';
+                                window.location.href = 'https://ewanc.dev/login';
                             });
                         }
                         removeshorturl(shortUrlCode, localStorage.getItem('token'), urlItem);

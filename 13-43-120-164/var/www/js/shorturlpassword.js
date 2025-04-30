@@ -7,7 +7,7 @@ function checkPassword() {
     const input = document.getElementById("passwordInput").value;
     const message = document.getElementById("message");
 
-    fetch(`https://bubllz.com/api/short/${id}/checkpassword`, {
+    fetch(`https://ewanc.dev/api/short/${id}/checkpassword`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
