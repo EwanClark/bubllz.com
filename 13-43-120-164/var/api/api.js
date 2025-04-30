@@ -40,7 +40,7 @@ app.use(RateLimiter);
 app.set("trust proxy", 1);
 app.use(
     cors({
-        origin: "https://bubllz.com",
+        origin: "https://ewanc.dev",
         methods: ["GET", "POST"],
         allowedHeaders: ["Content-Type", "Authorization", "token", "shorturl"],
     })
