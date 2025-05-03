@@ -18,7 +18,7 @@ let currentID = 1;
 // Function to get the short URL code from the full URL
 function extractShortUrlCode(text) {
     // Use regex to match the new short URL format
-    const match = text.match(/bubllz\.com\/api\/short\/([a-zA-Z0-9]+)/);
+    const match = text.match(/ewanc\.dev\/api\/short\/([a-zA-Z0-9]+)/);
     return match ? match[1] : null; // Return the matched code or null if not found
 }
 
