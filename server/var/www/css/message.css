@@ -111,6 +111,9 @@ button {
     color: var(--text-normal);
     font-size: 15px;
     line-height: 1.4;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
 }
 
 /* Input area */
@@ -379,6 +382,9 @@ input:disabled {
 
     .message-display-area div {
         font-size: 0.98em;
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: pre-wrap;
     }
 
     .message-input-container {
